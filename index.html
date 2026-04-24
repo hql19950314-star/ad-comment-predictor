@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>绻佹槦-瑙嗛鍒嗘瀽</title>
+<title>繁星-视频分析</title>
 <style>
-  /* 鈹€鈹€ Reset & Base 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Reset & Base ─────────────────────────────────────────────── */
   :root {
     --bg: #07090f;
     --surface: #0d1220;
@@ -72,7 +72,7 @@
 
   .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 28px 80px; }
 
-  /* 鈹€鈹€ Header 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Header ────────────────────────────────────────────────────── */
   header {
     display: flex;
     align-items: center;
@@ -128,7 +128,7 @@
   .server-badge.connected { border-color: rgba(52,211,153,0.3); color: var(--green); }
   .server-badge.connected .dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
 
-  /* 鈹€鈹€ Settings Panel 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Settings Panel ───────────────────────────────────────────── */
   .settings {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -218,7 +218,7 @@
   .form-hint { font-size: 11px; color: var(--text3); }
   .form-hint a { color: var(--blue); text-decoration: none; }
 
-  /* 鈹€鈹€ Upload Section 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Upload Section ───────────────────────────────────────────── */
   .upload-zone {
     border: 1.5px dashed var(--border2);
     border-radius: var(--radius);
@@ -269,7 +269,7 @@
   .upload-hint { margin-top: 16px; font-size: 12px; color: var(--text3); font-family: 'SF Mono', monospace; }
   #fileInput { display: none; }
 
-  /* 鈹€鈹€ Video Preview 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Video Preview ────────────────────────────────────────────── */
   .preview { display: none; margin-bottom: 36px; }
   .preview.show { display: block; }
   .preview-grid { display: grid; grid-template-columns: 420px 1fr; gap: 20px; align-items: start; }
@@ -303,7 +303,7 @@
   }
   .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,184,75,0.5); }
 
-  /* 鈹€鈹€ Analysis Loading 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Analysis Loading ──────────────────────────────────────────── */
   .analysis { display: none; margin-bottom: 36px; }
   .analysis.show { display: block; }
   .analysis-card {
@@ -356,7 +356,7 @@
   .progress-track { margin-top: 24px; background: var(--border); border-radius: 4px; height: 4px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold2)); border-radius: 4px; width: 0%; transition: width 0.6s ease; }
 
-  /* 鈹€鈹€ Results 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Results ───────────────────────────────────────────────────── */
   .results { display: none; margin-bottom: 36px; }
   .results.show { display: block; }
   .results-head {
@@ -420,7 +420,7 @@
   .tag { padding: 3px 9px; background: var(--card2); border: 1px solid var(--border2); border-radius: 5px; font-size: 11px; color: var(--text2); }
   .tag.risk { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.2); color: var(--red); }
 
-  /* 鈹€鈹€ Timeline 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Timeline ──────────────────────────────────────────────────── */
   .timeline-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -577,7 +577,7 @@
   .suggestion-item { display: flex; align-items: flex-start; gap: 10px; padding: 14px; background: rgba(74,158,255,0.06); border: 1px solid rgba(74,158,255,0.15); border-radius: 10px; font-size: 13px; line-height: 1.6; }
   .suggestion-icon { color: var(--blue); flex-shrink: 0; font-size: 16px; margin-top: 1px; }
 
-  /* 鈹€鈹€ Launch Panel (Modal) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Launch Panel (Modal) ──────────────────────────────────────── */
   .launch-overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.7);
@@ -757,7 +757,7 @@
   .lr-tn-time { font-size: 12px; color: var(--purple); font-weight: 700; font-family: 'SF Mono', monospace; margin-bottom: 6px; }
   .lr-tn-prompt { font-size: 13px; color: var(--text); line-height: 1.7; white-space: pre-wrap; }
 
-  /* 鈹€鈹€ Toast 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Toast ────────────────────────────────────────────────────── */
   .toast {
     position: fixed; bottom: 28px; right: 28px;
     background: var(--card2);
@@ -776,7 +776,7 @@
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast-icon { font-size: 18px; }
 
-  /* 鈹€鈹€ Responsive 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+  /* ── Responsive ───────────────────────────────────────────────── */
   @media (max-width: 860px) {
     .preview-grid { grid-template-columns: 1fr; }
     .visual-grid { grid-template-columns: repeat(2, 1fr); }
@@ -802,60 +802,60 @@
   <!-- Header -->
   <header>
     <div class="logo">
-      <div class="logo-icon">鉁?/div>
+      <div class="logo-icon">✨</div>
       <div>
-        <div class="logo-name">绻佹槦 <em>路</em> 瑙嗛鍒嗘瀽</div>
-        <div class="logo-sub">AI椹卞姩鐨勮棰戝唴瀹规礊瀵?/div>
+        <div class="logo-name">繁星 <em>·</em> 视频分析</div>
+        <div class="logo-sub">AI驱动的视频内容洞察</div>
       </div>
     </div>
     <div class="hdr-right">
       <div class="server-badge" id="serverBadge">
         <div class="dot"></div>
-        <span id="serverText">妫€娴嬩腑...</span>
+        <span id="serverText">检测中...</span>
       </div>
-      <button class="hdr-btn" id="settingsBtn" title="璁剧疆">鈿欙笍</button>
+      <button class="hdr-btn" id="settingsBtn" title="设置">⚙️</button>
     </div>
   </header>
 
   <!-- Settings Panel -->
   <div class="settings" id="settingsPanel">
     <div class="settings-header">
-      <h3>鈿欙笍 璁剧疆</h3>
+      <h3>⚙️ 设置</h3>
     </div>
     <div class="settings-body">
       <div class="template-section">
-        <div class="template-label">馃摑 鎻愮ず璇嶆ā鏉匡紙鐢ㄤ簬鐢熸垚 Seedance 2.0 鎻愮ず璇嶏級</div>
+        <div class="template-label">📝 提示词模板（用于生成 Seedance 2.0 提示词）</div>
         <div class="template-list" id="templateList"></div>
         <div class="template-add">
           <div class="form-group">
-            <input type="text" class="form-input" id="tplNameInput" placeholder="妯℃澘鍚嶇О">
+            <input type="text" class="form-input" id="tplNameInput" placeholder="模板名称">
           </div>
           <div class="form-group" style="flex:3">
-            <textarea class="form-input" id="tplContentInput" placeholder="妯℃澘鍐呭锛屾敮鎸佸崰浣嶇锛歿product} {sellingPoints} {visualStyle} 绛?></textarea>
+            <textarea class="form-input" id="tplContentInput" placeholder="模板内容，支持占位符：{product} {sellingPoints} {visualStyle} 等"></textarea>
           </div>
-          <button class="btn btn-primary" id="addTplBtn">娣诲姞</button>
+          <button class="btn btn-primary" id="addTplBtn">添加</button>
         </div>
       </div>
     </div>
     <div class="settings-footer">
       <div class="server-config">
         <div class="form-group">
-          <input type="text" class="form-input" id="serverUrlInput" placeholder="鑷姩妫€娴?>
-          <div class="form-hint">鍚庣鍦板潃</div>
+          <input type="text" class="form-input" id="serverUrlInput" placeholder="自动检测">
+          <div class="form-hint">后端地址</div>
         </div>
       </div>
-      <button class="btn btn-ghost" id="testBtn">娴嬭瘯杩炴帴</button>
-      <button class="btn btn-primary" id="saveBtn">淇濆瓨</button>
+      <button class="btn btn-ghost" id="testBtn">测试连接</button>
+      <button class="btn btn-primary" id="saveBtn">保存</button>
     </div>
   </div>
 
   <!-- Upload -->
   <div class="upload-zone" id="uploadZone">
-    <div class="upload-icon">馃幀</div>
-    <div class="upload-title">鎷栨嫿瑙嗛鏂囦欢鍒版澶?/div>
-    <div class="upload-sub">鎴栫偣鍑讳笅鏂规寜閽€夋嫨鏂囦欢</div>
-    <button class="upload-btn">閫夋嫨瑙嗛鏂囦欢</button>
-    <div class="upload-hint">鏀寔 MP4 路 MOV 路 WebM 路 AVI &nbsp;路&nbsp; 鏈€澶?200MB</div>
+    <div class="upload-icon">🎬</div>
+    <div class="upload-title">拖拽视频文件到此处</div>
+    <div class="upload-sub">或点击下方按钮选择文件</div>
+    <button class="upload-btn">选择视频文件</button>
+    <div class="upload-hint">支持 MP4 · MOV · WebM · AVI &nbsp;·&nbsp; 最大 200MB</div>
   </div>
   <input type="file" id="fileInput" accept="video/*">
 
@@ -866,13 +866,13 @@
         <video id="videoEl" controls></video>
       </div>
       <div class="meta-card">
-        <div class="meta-title">馃搫 鏂囦欢淇℃伅</div>
-        <div class="meta-row"><span class="meta-key">鏂囦欢鍚?/span><span class="meta-val" id="mName">-</span></div>
-        <div class="meta-row"><span class="meta-key">鏍煎紡</span><span class="meta-val" id="mFmt">-</span></div>
-        <div class="meta-row"><span class="meta-key">澶у皬</span><span class="meta-val" id="mSize">-</span></div>
-        <div class="meta-row"><span class="meta-key">鏃堕暱</span><span class="meta-val" id="mDur">-</span></div>
-        <div class="meta-row"><span class="meta-key">鍒嗚鲸鐜?/span><span class="meta-val" id="mRes">-</span></div>
-        <button class="start-btn" id="startBtn">馃殌 寮€濮?AI 鍒嗘瀽</button>
+        <div class="meta-title">📄 文件信息</div>
+        <div class="meta-row"><span class="meta-key">文件名</span><span class="meta-val" id="mName">-</span></div>
+        <div class="meta-row"><span class="meta-key">格式</span><span class="meta-val" id="mFmt">-</span></div>
+        <div class="meta-row"><span class="meta-key">大小</span><span class="meta-val" id="mSize">-</span></div>
+        <div class="meta-row"><span class="meta-key">时长</span><span class="meta-val" id="mDur">-</span></div>
+        <div class="meta-row"><span class="meta-key">分辨率</span><span class="meta-val" id="mRes">-</span></div>
+        <button class="start-btn" id="startBtn">🚀 开始 AI 分析</button>
       </div>
     </div>
   </div>
@@ -883,16 +883,16 @@
       <div class="analysis-top">
         <div class="spinner"></div>
         <div>
-          <div class="analysis-title" id="aTitle">姝ｅ湪澶勭悊...</div>
-          <div class="analysis-sub" id="aSub">璇风◢鍊?/div>
+          <div class="analysis-title" id="aTitle">正在处理...</div>
+          <div class="analysis-sub" id="aSub">请稍候</div>
         </div>
       </div>
       <div class="steps">
-        <div class="step" id="s1"><div class="step-dot"></div>涓婁紶瑙嗛</div>
-        <div class="step" id="s2"><div class="step-dot"></div>瑙嗚鍐呭鍒嗘瀽 + 鏃堕棿杞?/div>
-        <div class="step" id="s3"><div class="step-dot"></div>鐢熸垚鏃堕棿杞存彁绀鸿瘝</div>
-        <div class="step" id="s4"><div class="step-dot"></div>鑸嗘儏椋庨櫓璇勪及</div>
-        <div class="step" id="s5"><div class="step-dot"></div>杈撳嚭鎶ュ憡</div>
+        <div class="step" id="s1"><div class="step-dot"></div>上传视频</div>
+        <div class="step" id="s2"><div class="step-dot"></div>视觉内容分析 + 时间轴</div>
+        <div class="step" id="s3"><div class="step-dot"></div>生成时间轴提示词</div>
+        <div class="step" id="s4"><div class="step-dot"></div>舆情风险评估</div>
+        <div class="step" id="s5"><div class="step-dot"></div>输出报告</div>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     </div>
@@ -901,15 +901,15 @@
   <!-- Results -->
   <div class="results" id="resultsSection">
     <div class="results-head">
-      <div class="results-title">馃搳 鍒嗘瀽鎶ュ憡</div>
-      <button class="btn-reset" id="resetBtn">馃攧 鏂板垎鏋?/button>
+      <div class="results-title">📊 分析报告</div>
+      <button class="btn-reset" id="resetBtn">🔄 新分析</button>
     </div>
 
     <!-- Risk Assessment -->
     <div class="risk-card">
       <div class="risk-top">
-        <div class="risk-label">馃洝锔?鑸嗘儏椋庨櫓璇勪及</div>
-        <div class="risk-badge" id="riskBadge">浣庨闄?/div>
+        <div class="risk-label">🛡️ 舆情风险评估</div>
+        <div class="risk-badge" id="riskBadge">低风险</div>
       </div>
       <div class="risk-meter-wrap">
         <div class="risk-meter-track">
@@ -921,43 +921,43 @@
 
     <!-- Visual Summary -->
     <div class="visual-card">
-      <div class="visual-title">馃幆 瑙嗛鍐呭鎽樿</div>
+      <div class="visual-title">🎯 视频内容摘要</div>
       <div class="visual-grid">
-        <div class="visual-item"><div class="visual-key">浜у搧</div><div class="visual-val" id="vProduct">-</div></div>
-        <div class="visual-item"><div class="visual-key">鍒嗙被</div><div class="visual-val" id="vCategory">-</div></div>
-        <div class="visual-item"><div class="visual-key">姘涘洿</div><div class="visual-val" id="vMood">-</div></div>
-        <div class="visual-item"><div class="visual-key">璐ㄩ噺</div><div class="visual-val" id="vQuality">-</div></div>
-        <div class="visual-item" style="grid-column:span 2"><div class="visual-key">瑙嗚椋庢牸</div><div class="visual-val" id="vStyle">-</div></div>
-        <div class="visual-item" style="grid-column:span 2"><div class="visual-key">鐩爣鍙椾紬</div><div class="visual-val" id="vAudience">-</div></div>
-        <div class="visual-item" style="grid-column:span 4"><div class="visual-key">鏍稿績鍗栫偣</div><div class="visual-tags" id="vSellingPoints"></div></div>
-        <div class="visual-item" style="grid-column:span 4"><div class="visual-key">椋庨櫓鐐?/div><div class="visual-tags" id="vRiskPoints"></div></div>
+        <div class="visual-item"><div class="visual-key">产品</div><div class="visual-val" id="vProduct">-</div></div>
+        <div class="visual-item"><div class="visual-key">分类</div><div class="visual-val" id="vCategory">-</div></div>
+        <div class="visual-item"><div class="visual-key">氛围</div><div class="visual-val" id="vMood">-</div></div>
+        <div class="visual-item"><div class="visual-key">质量</div><div class="visual-val" id="vQuality">-</div></div>
+        <div class="visual-item" style="grid-column:span 2"><div class="visual-key">视觉风格</div><div class="visual-val" id="vStyle">-</div></div>
+        <div class="visual-item" style="grid-column:span 2"><div class="visual-key">目标受众</div><div class="visual-val" id="vAudience">-</div></div>
+        <div class="visual-item" style="grid-column:span 4"><div class="visual-key">核心卖点</div><div class="visual-tags" id="vSellingPoints"></div></div>
+        <div class="visual-item" style="grid-column:span 4"><div class="visual-key">风险点</div><div class="visual-tags" id="vRiskPoints"></div></div>
       </div>
     </div>
 
     <!-- Timeline -->
     <div class="timeline-card">
-      <div class="timeline-title">馃晲 鏃堕棿杞村垎鏋?<span style="font-size:11px;color:var(--text3);font-weight:400">鎸夋椂闂磋妭鐐规媶瑙ｇ敾闈笌鍙拌瘝</span></div>
+      <div class="timeline-title">🕐 时间轴分析 <span style="font-size:11px;color:var(--text3);font-weight:400">按时间节点拆解画面与台词</span></div>
       <div class="timeline-list" id="timelineList"></div>
     </div>
 
     <!-- Seedance Prompt -->
     <div class="prompt-card">
       <div class="prompt-head">
-        <div class="prompt-title">鉁?<span id="promptTplName">Seedance 2.0</span> 鎻愮ず璇?/div>
+        <div class="prompt-title">✨ <span id="promptTplName">Seedance 2.0</span> 提示词</div>
         <div class="prompt-badge">Seedance 2.0</div>
       </div>
       <div class="prompt-text" id="promptText">-</div>
       <div class="prompt-actions">
-        <button class="btn-copy" id="copyBtn">馃搵 澶嶅埗鎻愮ず璇?/button>
-        <button class="btn-export" id="exportBtn">馃捑 淇濆瓨鍒版湰鍦?/button>
-        <button class="btn-launch" id="launchBtn">馃殌 鎻愮ず璇嶅彂灏?/button>
+        <button class="btn-copy" id="copyBtn">📋 复制提示词</button>
+        <button class="btn-export" id="exportBtn">💾 保存到本地</button>
+        <button class="btn-launch" id="launchBtn">🚀 提示词发射</button>
       </div>
       <div class="breakdown" id="breakdownGrid"></div>
     </div>
 
     <!-- Suggestions -->
     <div class="suggestions-card">
-      <div class="suggestions-title">馃挕 鑸嗘儏浼樺寲寤鸿</div>
+      <div class="suggestions-title">💡 舆情优化建议</div>
       <div class="suggestions-list" id="suggestionsList"></div>
     </div>
   </div>
@@ -968,59 +968,59 @@
 <div class="launch-overlay" id="launchOverlay">
   <div class="launch-panel">
     <div class="launch-header">
-      <div class="launch-title">馃殌 鎻愮ず璇嶅彂灏?/div>
-      <button class="launch-close" id="launchClose">鉁?/button>
+      <div class="launch-title">🚀 提示词发射</div>
+      <button class="launch-close" id="launchClose">✕</button>
     </div>
 
     <div class="launch-section">
-      <div class="launch-section-title">馃帹 鏀瑰彉鐢婚 <span class="hint">锛堝崟閫夛級</span></div>
+      <div class="launch-section-title">🎨 改变画风 <span class="hint">（单选）</span></div>
       <div class="style-grid" id="styleGrid">
-        <div class="style-option" data-style="Q鐗?><span class="s-icon">馃Ц</span><span class="s-name">Q鐗?/span></div>
-        <div class="style-option" data-style="鍐欏疄"><span class="s-icon">馃摲</span><span class="s-name">鍐欏疄</span></div>
-        <div class="style-option" data-style="3D娓叉煋"><span class="s-icon">馃</span><span class="s-name">3D娓叉煋</span></div>
-        <div class="style-option" data-style="鐪熶汉"><span class="s-icon">馃幁</span><span class="s-name">鐪熶汉</span></div>
-        <div class="style-option" data-style="璧涘崥鏈嬪厠"><span class="s-icon">馃寖</span><span class="s-name">璧涘崥鏈嬪厠</span></div>
-        <div class="style-option" data-style="姘村ⅷ椋?><span class="s-icon">馃枌锔?/span><span class="s-name">姘村ⅷ椋?/span></div>
-        <div class="style-option" data-style="鍍忕礌椋?><span class="s-icon">馃懢</span><span class="s-name">鍍忕礌椋?/span></div>
-        <div class="style-option" data-style="鏃ョ郴鍔ㄦ极"><span class="s-icon">鉀╋笍</span><span class="s-name">鏃ョ郴鍔ㄦ极</span></div>
+        <div class="style-option" data-style="Q版"><span class="s-icon">🧸</span><span class="s-name">Q版</span></div>
+        <div class="style-option" data-style="写实"><span class="s-icon">📷</span><span class="s-name">写实</span></div>
+        <div class="style-option" data-style="3D渲染"><span class="s-icon">🧊</span><span class="s-name">3D渲染</span></div>
+        <div class="style-option" data-style="真人"><span class="s-icon">🎭</span><span class="s-name">真人</span></div>
+        <div class="style-option" data-style="赛博朋克"><span class="s-icon">🌃</span><span class="s-name">赛博朋克</span></div>
+        <div class="style-option" data-style="水墨风"><span class="s-icon">🖌️</span><span class="s-name">水墨风</span></div>
+        <div class="style-option" data-style="像素风"><span class="s-icon">👾</span><span class="s-name">像素风</span></div>
+        <div class="style-option" data-style="日系动漫"><span class="s-icon">⛩️</span><span class="s-name">日系动漫</span></div>
       </div>
     </div>
 
     <div class="launch-section">
-      <div class="launch-section-title">鈿?浼樺寲鏂瑰悜 <span class="hint">锛堝彲澶氶€夛級</span></div>
+      <div class="launch-section-title">⚡ 优化方向 <span class="hint">（可多选）</span></div>
       <div class="opt-grid" id="optGrid">
-        <div class="opt-option" data-opt="寮哄寲鍐茬獊"><div class="opt-check">鉁?/div><span class="opt-label">鈿旓笍 寮哄寲鍐茬獊</span></div>
-        <div class="opt-option" data-opt="鎻愬崌瓒ｅ懗"><div class="opt-check">鉁?/div><span class="opt-label">馃槃 鎻愬崌瓒ｅ懗</span></div>
-        <div class="opt-option" data-opt="澧炲姞缃戠粶姊?><div class="opt-check">鉁?/div><span class="opt-label">馃珷 澧炲姞缃戠粶姊?/span></div>
-        <div class="opt-option" data-opt="澧炲己鎯呮劅"><div class="opt-check">鉁?/div><span class="opt-label">馃挄 澧炲己鎯呮劅</span></div>
-        <div class="opt-option" data-opt="鍔犲揩鑺傚"><div class="opt-check">鉁?/div><span class="opt-label">鈿?鍔犲揩鑺傚</span></div>
-        <div class="opt-option" data-opt="鎻愬崌璐ㄦ劅"><div class="opt-check">鉁?/div><span class="opt-label">鉁?鎻愬崌璐ㄦ劅</span></div>
+        <div class="opt-option" data-opt="强化冲突"><div class="opt-check">✓</div><span class="opt-label">⚔️ 强化冲突</span></div>
+        <div class="opt-option" data-opt="提升趣味"><div class="opt-check">✓</div><span class="opt-label">😄 提升趣味</span></div>
+        <div class="opt-option" data-opt="增加网络梗"><div class="opt-check">✓</div><span class="opt-label">🫠 增加网络梗</span></div>
+        <div class="opt-option" data-opt="增强情感"><div class="opt-check">✓</div><span class="opt-label">💕 增强情感</span></div>
+        <div class="opt-option" data-opt="加快节奏"><div class="opt-check">✓</div><span class="opt-label">⚡ 加快节奏</span></div>
+        <div class="opt-option" data-opt="提升质感"><div class="opt-check">✓</div><span class="opt-label">✨ 提升质感</span></div>
       </div>
     </div>
 
-    <button class="launch-fire-btn" id="launchFireBtn">馃敟 鍙戝皠鏂版彁绀鸿瘝</button>
+    <button class="launch-fire-btn" id="launchFireBtn">🔥 发射新提示词</button>
 
     <!-- Launch Result -->
     <div class="launch-result" id="launchResult">
       <div class="launch-result-card">
-        <div class="lr-badge" id="lrBadge">馃帹 鐢婚</div>
+        <div class="lr-badge" id="lrBadge">🎨 画风</div>
         <div class="lr-text" id="lrText"></div>
         <div class="lr-changes" id="lrChanges"></div>
       </div>
       <div class="lr-timeline" id="lrTimeline"></div>
       <div style="margin-top:16px;display:flex;gap:10px;">
-        <button class="btn-copy" id="lrCopyBtn">馃搵 澶嶅埗鏂版彁绀鸿瘝</button>
-        <button class="btn-export" id="lrExportBtn">馃捑 淇濆瓨鏂版彁绀鸿瘝</button>
+        <button class="btn-copy" id="lrCopyBtn">📋 复制新提示词</button>
+        <button class="btn-export" id="lrExportBtn">💾 保存新提示词</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Toast -->
-<div class="toast" id="toast"><span class="toast-icon" id="tIcon">鈩癸笍</span><span id="tText"></span></div>
+<div class="toast" id="toast"><span class="toast-icon" id="tIcon">ℹ️</span><span id="tText"></span></div>
 
 <script>
-// 鈹€鈹€ State 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ── State ─────────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 let serverUrl = localStorage.getItem('star_server') ||
   (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1' ? location.origin : 'http://localhost:3000');
@@ -1031,17 +1031,17 @@ let selectedOpts = new Set();
 
 let templates = JSON.parse(localStorage.getItem('star_templates') || 'null') || [
   {
-    name: 'Seedance 2.0 鏍囧噯妯℃澘',
-    template: `@鍥剧墖1浣滀负涓讳綋瑙掕壊锛孿n@瑙嗛1浣滀负闀滃ご璇█鍙傝€冿紝\n@闊抽1浣滀负鑳屾櫙闊充箰鍙傝€冿紝\n鍦▄scene}涓繘琛岃棰戝垱浣滐紝\n{visualStyle}瑙嗚椋庢牸锛寋colorTone}鑹茶皟锛寋mood}姘涘洿锛孿n{shotComposition}锛孿n{adTechnique}锛孿n鏍稿績鍗栫偣锛歿sellingPoints}锛孿n{BGM}鑳屾櫙闊充箰锛歿audioElements}`
+    name: 'Seedance 2.0 标准模板',
+    template: `@图片1作为主体角色，\n@视频1作为镜头语言参考，\n@音频1作为背景音乐参考，\n在{scene}中进行视频创作，\n{visualStyle}视觉风格，{colorTone}色调，{mood}氛围，\n{shotComposition}，\n{adTechnique}，\n核心卖点：{sellingPoints}，\n{BGM}背景音乐：{audioElements}`
   },
   {
-    name: '鐢靛奖鎰熸ā鏉?,
-    template: `闀滃ご锛歿shotComposition}锛孿n鍦烘櫙锛歿scene}锛孿n涓讳綋瑙掕壊锛欯鍥剧墖1锛孿n杩愰暅鍙傝€冿細@瑙嗛1锛孿n{BGM}閰嶄箰锛歿audioElements}锛孿n{visualStyle}锛寋colorTone}鑹茶皟锛孿n{mood}鎯呯华鍩鸿皟锛孿n鏍稿績鍗栫偣锛歿sellingPoints}锛孿n{adTechnique}锛孿n鍏夊奖锛歿lighting}锛屾瀯鍥撅細{composition}`
+    name: '电影感模板',
+    template: `镜头：{shotComposition}，\n场景：{scene}，\n主体角色：@图片1，\n运镜参考：@视频1，\n{BGM}配乐：{audioElements}，\n{visualStyle}，{colorTone}色调，\n{mood}情绪基调，\n核心卖点：{sellingPoints}，\n{adTechnique}，\n光影：{lighting}，构图：{composition}`
   }
 ];
 let activeTemplate = localStorage.getItem('star_active_tpl') || templates[0].name;
 
-// 鈹€鈹€ Init 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ── Init ───────────────────────────────────────────────────────────────────
 function init() {
   $('serverUrlInput').value = serverUrl;
   renderTemplates();
@@ -1052,9 +1052,9 @@ function init() {
 function renderTemplates() {
   $('templateList').innerHTML = templates.map(t => `
     <div class="template-item${t.name === activeTemplate ? ' active' : ''}" data-name="${esc(t.name)}">
-      <span class="t-check">鉁?/span>
+      <span class="t-check">✓</span>
       <span class="t-name">${esc(t.name)}</span>
-      <span class="t-del" data-del="${esc(t.name)}">鉁?/span>
+      <span class="t-del" data-del="${esc(t.name)}">✕</span>
     </div>
   `).join('');
 }
@@ -1078,21 +1078,21 @@ function bindEvents() {
   $('addTplBtn').onclick = () => {
     const name = $('tplNameInput').value.trim();
     const content = $('tplContentInput').value.trim();
-    if (!name || !content) { showToast('鈿狅笍 璇峰～鍐欏悕绉板拰妯℃澘鍐呭'); return; }
-    if (templates.find(t => t.name === name)) { showToast('鈿狅笍 璇ュ悕绉板凡瀛樺湪'); return; }
+    if (!name || !content) { showToast('⚠️ 请填写名称和模板内容'); return; }
+    if (templates.find(t => t.name === name)) { showToast('⚠️ 该名称已存在'); return; }
     templates.push({ name, template: content });
     activeTemplate = name;
     saveTemplates();
     renderTemplates();
     $('tplNameInput').value = '';
     $('tplContentInput').value = '';
-    showToast('鉁?妯℃澘宸叉坊鍔?);
+    showToast('✅ 模板已添加');
   };
   $('testBtn').onclick = testServer;
   $('saveBtn').onclick = () => {
     serverUrl = $('serverUrlInput').value.trim() || 'http://localhost:3000';
     localStorage.setItem('star_server', serverUrl);
-    showToast('鉁?璁剧疆宸蹭繚瀛?);
+    showToast('✅ 设置已保存');
     testServer();
     $('settingsPanel').classList.remove('open');
   };
@@ -1151,7 +1151,7 @@ function saveTemplates() {
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => showToast('鉁?宸插鍒跺埌鍓创鏉?));
+  navigator.clipboard.writeText(text).then(() => showToast('✅ 已复制到剪贴板'));
 }
 
 function exportText(text, filename) {
@@ -1160,32 +1160,32 @@ function exportText(text, filename) {
   const a = document.createElement('a');
   a.href = url; a.download = filename;
   a.click(); URL.revokeObjectURL(url);
-  showToast('鉁?宸蹭繚瀛樺埌鏈湴');
+  showToast('✅ 已保存到本地');
 }
 
-// 鈹€鈹€ Server 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ── Server ─────────────────────────────────────────────────────────────────
 async function testServer() {
   const badge = $('serverBadge');
   const text = $('serverText');
   badge.className = 'server-badge';
-  text.textContent = '杩炴帴涓?..';
+  text.textContent = '连接中...';
   try {
     const res = await fetch(`${serverUrl}/health`, { signal: AbortSignal.timeout(5000) });
     if (res.ok) {
       const d = await res.json();
       badge.className = 'server-badge connected';
-      text.textContent = d.version || '宸茶繛鎺?;
+      text.textContent = d.version || '已连接';
     } else { throw new Error(); }
   } catch {
     badge.className = 'server-badge';
-    text.textContent = '鏈繛鎺?;
+    text.textContent = '未连接';
   }
 }
 
-// 鈹€鈹€ File 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ── File ────────────────────────────────────────────────────────────────────
 function handleFile(file) {
-  if (!file || !file.type.startsWith('video/')) { showToast('鈿狅笍 璇烽€夋嫨瑙嗛鏂囦欢'); return; }
-  if (file.size > 200 * 1024 * 1024) { showToast('鈿狅笍 鏂囦欢瓒呰繃 200MB'); return; }
+  if (!file || !file.type.startsWith('video/')) { showToast('⚠️ 请选择视频文件'); return; }
+  if (file.size > 200 * 1024 * 1024) { showToast('⚠️ 文件超过 200MB'); return; }
   currentFile = file;
   const url = URL.createObjectURL(file);
   const video = $('videoEl');
@@ -1195,7 +1195,7 @@ function handleFile(file) {
     $('mFmt').textContent = file.type.split('/')[1].toUpperCase();
     $('mSize').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
     $('mDur').textContent = fmtTime(video.duration);
-    $('mRes').textContent = video.videoWidth + '脳' + video.videoHeight;
+    $('mRes').textContent = video.videoWidth + '×' + video.videoHeight;
     $('uploadZone').style.display = 'none';
     $('previewSection').classList.add('show');
   };
@@ -1207,7 +1207,7 @@ function fmtTime(s) {
   return `${m}:${sec.toString().padStart(2,'0')}`;
 }
 
-// 鈹€鈹€ Analysis 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ── Analysis ────────────────────────────────────────────────────────────────
 async function startAnalysis() {
   if (!currentFile) return;
 
@@ -1216,11 +1216,11 @@ async function startAnalysis() {
   $('analysisSection').classList.add('show');
 
   const steps = [
-    { id: 's1', t: '涓婁紶瑙嗛鏂囦欢...', s: '姝ｅ湪浼犺緭', d: 0 },
-    { id: 's2', t: '瑙嗚鍐呭鍒嗘瀽 + 鏃堕棿杞?..', s: 'Gemini 鐞嗚В瑙嗛', d: 2000 },
-    { id: 's3', t: '鐢熸垚鏃堕棿杞存彁绀鸿瘝...', s: '鎸夎妭鐐圭敓鎴?, d: 8000 },
-    { id: 's4', t: '鑸嗘儏椋庨櫓璇勪及...', s: '鍒嗘瀽椋庨櫓鍥犵礌', d: 14000 },
-    { id: 's5', t: '杈撳嚭鎶ュ憡...', s: '鍗冲皢瀹屾垚', d: 18000 }
+    { id: 's1', t: '上传视频文件...', s: '正在传输', d: 0 },
+    { id: 's2', t: '视觉内容分析 + 时间轴...', s: 'Gemini 理解视频', d: 2000 },
+    { id: 's3', t: '生成时间轴提示词...', s: '按节点生成', d: 8000 },
+    { id: 's4', t: '舆情风险评估...', s: '分析风险因素', d: 14000 },
+    { id: 's5', t: '输出报告...', s: '即将完成', d: 18000 }
   ];
 
   steps.forEach((step, i) => {
@@ -1257,35 +1257,35 @@ async function startAnalysis() {
     setTimeout(() => {
       $('s5').classList.remove('active'); $('s5').classList.add('done');
       $('progressFill').style.width = '100%';
-      $('aTitle').textContent = '鍒嗘瀽瀹屾垚';
-      $('aSub').textContent = `鑰楁椂 ${result.elapsed} 绉抈;
+      $('aTitle').textContent = '分析完成';
+      $('aSub').textContent = `耗时 ${result.elapsed} 秒`;
       setTimeout(() => { $('analysisSection').classList.remove('show'); showResults(data); }, 600);
     }, 20000);
 
   } catch (err) {
     console.error(err);
-    $('aTitle').textContent = '鍒嗘瀽澶辫触';
+    $('aTitle').textContent = '分析失败';
     $('aSub').textContent = err.message;
     setTimeout(() => { $('analysisSection').classList.remove('show'); $('previewSection').classList.add('show'); }, 3000);
-    showToast('鉂?' + err.message);
+    showToast('❌ ' + err.message);
   }
 }
 
-// 鈹€鈹€ Results 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ── Results ─────────────────────────────────────────────────────────────────
 function showResults(data) {
   $('resultsSection').classList.add('show');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   // Risk
-  const risk = data.riskAssessment || { overall: '鏈煡', score: 50, factors: [] };
-  const riskLevel = risk.overall === '楂橀闄? ? 'high' : risk.overall === '涓闄? ? 'mid' : 'low';
+  const risk = data.riskAssessment || { overall: '未知', score: 50, factors: [] };
+  const riskLevel = risk.overall === '高风险' ? 'high' : risk.overall === '中风险' ? 'mid' : 'low';
   const badge = $('riskBadge');
   badge.className = 'risk-badge ' + riskLevel;
-  badge.textContent = risk.overall || '鏈煡';
+  badge.textContent = risk.overall || '未知';
   const fill = $('riskFill');
   fill.className = 'risk-meter-fill ' + riskLevel;
   setTimeout(() => { fill.style.width = (risk.score || 50) + '%'; }, 100);
-  $('riskFactors').innerHTML = (risk.factors || []).map(f => `<div class="risk-factor">鈿狅笍 ${esc(f)}</div>`).join('') || '<div style="font-size:13px;color:var(--text3)">鏃犳槑鏄鹃闄╁洜绱?/div>';
+  $('riskFactors').innerHTML = (risk.factors || []).map(f => `<div class="risk-factor">⚠️ ${esc(f)}</div>`).join('') || '<div style="font-size:13px;color:var(--text3)">无明显风险因素</div>';
 
   // Visual
   const v = data.visual || {};
@@ -1296,7 +1296,7 @@ function showResults(data) {
   $('vStyle').textContent = v.visualStyle || '-';
   $('vAudience').textContent = v.targetAudience || '-';
   $('vSellingPoints').innerHTML = (v.sellingPoints || []).map(s => `<span class="tag">${esc(s)}</span>`).join('') || '-';
-  $('vRiskPoints').innerHTML = (v.controversialElements || []).map(s => `<span class="tag risk">${esc(s)}</span>`).join('') || '<span class="tag">鏃?/span>';
+  $('vRiskPoints').innerHTML = (v.controversialElements || []).map(s => `<span class="tag risk">${esc(s)}</span>`).join('') || '<span class="tag">无</span>';
 
   // Timeline
   const timeline = data.timeline || [];
@@ -1307,16 +1307,16 @@ function showResults(data) {
       <div class="timeline-node">
         <div class="timeline-time">${esc(t.timeRange)}</div>
         <div class="timeline-content">
-          <div class="tc-row"><span class="tc-label">鐢婚潰</span><span class="tc-val">${esc(t.visual)}</span></div>
-          ${t.dialogue ? `<div class="tc-row"><span class="tc-label">鍙拌瘝</span><span class="tc-val dialogue">"${esc(t.dialogue)}"</span></div>` : ''}
-          <div class="tc-row"><span class="tc-label">鍔ㄤ綔</span><span class="tc-val">${esc(t.action)}</span></div>
-          <div class="tc-row"><span class="tc-label">闀滃ご</span><span class="tc-val">${esc(t.camera)}</span></div>
-          <div class="tc-row"><span class="tc-label">鎯呯华</span><span class="tc-val">${esc(t.emotion)}</span></div>
-          ${prompt ? `<div class="tc-prompt">鉁?${esc(prompt.prompt)}</div>` : ''}
+          <div class="tc-row"><span class="tc-label">画面</span><span class="tc-val">${esc(t.visual)}</span></div>
+          ${t.dialogue ? `<div class="tc-row"><span class="tc-label">台词</span><span class="tc-val dialogue">"${esc(t.dialogue)}"</span></div>` : ''}
+          <div class="tc-row"><span class="tc-label">动作</span><span class="tc-val">${esc(t.action)}</span></div>
+          <div class="tc-row"><span class="tc-label">镜头</span><span class="tc-val">${esc(t.camera)}</span></div>
+          <div class="tc-row"><span class="tc-label">情绪</span><span class="tc-val">${esc(t.emotion)}</span></div>
+          ${prompt ? `<div class="tc-prompt">✨ ${esc(prompt.prompt)}</div>` : ''}
         </div>
       </div>
     `;
-  }).join('') || '<div style="font-size:13px;color:var(--text3);padding:8px">鏃犳椂闂磋酱鏁版嵁</div>';
+  }).join('') || '<div style="font-size:13px;color:var(--text3);padding:8px">无时间轴数据</div>';
 
   // Seedance Prompt
   $('promptText').textContent = data.seedancePrompt || '-';
@@ -1324,8 +1324,8 @@ function showResults(data) {
 
   // Breakdown
   const bd = data.promptBreakdown || {};
-  const breakdownKeys = ['涓讳綋', '鍦烘櫙', '鍔ㄤ綔', '椋庢牸', '鑹茶皟', '杩愰暅', '闊充箰'];
-  const breakdownVals = [bd['涓讳綋'], bd['鍦烘櫙'], bd['鍔ㄤ綔'], bd['椋庢牸'], bd['鑹茶皟'], bd['杩愰暅'], bd['闊充箰']];
+  const breakdownKeys = ['主体', '场景', '动作', '风格', '色调', '运镜', '音乐'];
+  const breakdownVals = [bd['主体'], bd['场景'], bd['动作'], bd['风格'], bd['色调'], bd['运镜'], bd['音乐']];
   $('breakdownGrid').innerHTML = breakdownKeys.map((k, i) => `
     <div class="breakdown-item">
       <div class="breakdown-key">${k}</div>
@@ -1336,20 +1336,20 @@ function showResults(data) {
   // Suggestions
   $('suggestionsList').innerHTML = (data.suggestions || []).map(s => `
     <div class="suggestion-item">
-      <span class="suggestion-icon">馃挕</span>
+      <span class="suggestion-icon">💡</span>
       <span>${esc(s)}</span>
     </div>
-  `).join('') || '<div style="font-size:13px;color:var(--text3);padding:4px">鏆傛棤寤鸿</div>';
+  `).join('') || '<div style="font-size:13px;color:var(--text3);padding:4px">暂无建议</div>';
 }
 
-// 鈹€鈹€ Launch (Stage 3) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ── Launch (Stage 3) ────────────────────────────────────────────────────────
 async function fireLaunch() {
-  if (!selectedStyle) { showToast('鈿狅笍 璇峰厛閫夋嫨鐢婚'); return; }
-  if (!lastResult) { showToast('鈿狅笍 鏃犲垎鏋愭暟鎹?); return; }
+  if (!selectedStyle) { showToast('⚠️ 请先选择画风'); return; }
+  if (!lastResult) { showToast('⚠️ 无分析数据'); return; }
 
   const btn = $('launchFireBtn');
   btn.disabled = true;
-  btn.textContent = '馃敟 姝ｅ湪鐢熸垚...';
+  btn.textContent = '🔥 正在生成...';
   $('launchResult').classList.remove('show');
 
   try {
@@ -1377,18 +1377,18 @@ async function fireLaunch() {
     showLaunchResult(result.data);
 
   } catch (err) {
-    showToast('鉂?鍙戝皠澶辫触: ' + err.message);
+    showToast('❌ 发射失败: ' + err.message);
   } finally {
     btn.disabled = false;
-    btn.textContent = '馃敟 鍙戝皠鏂版彁绀鸿瘝';
+    btn.textContent = '🔥 发射新提示词';
   }
 }
 
 function showLaunchResult(data) {
   $('launchResult').classList.add('show');
-  $('lrBadge').textContent = `馃帹 ${data.artStyle || selectedStyle}`;
+  $('lrBadge').textContent = `🎨 ${data.artStyle || selectedStyle}`;
   $('lrText').textContent = data.seedancePrompt || '-';
-  $('lrChanges').textContent = data.changesSummary ? `馃搵 鍙樺寲鎽樿锛?{data.changesSummary}` : '';
+  $('lrChanges').textContent = data.changesSummary ? `📋 变化摘要：${data.changesSummary}` : '';
 
   // Timeline prompts
   const tp = data.timelinePrompts || [];
@@ -1422,7 +1422,7 @@ function resetAll() {
 }
 
 function showToast(msg) {
-  const icon = msg.match(/^[^\s]+/)?.[0] || '鈩癸笍';
+  const icon = msg.match(/^[^\s]+/)?.[0] || 'ℹ️';
   $('tIcon').textContent = icon;
   $('tText').textContent = msg;
   $('toast').classList.add('show');
