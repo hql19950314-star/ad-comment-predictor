@@ -1,7 +1,7 @@
 {
   "name": "star-video-analyzer",
   "version": "4.0.0",
-  "description": "绻佹槦-瑙嗛鍒嗘瀽 - Gemini 鍘熺敓瑙嗛鍒嗘瀽涓?Seedance 鎻愮ず璇嶇敓鎴?,
+  "description": "繁星-视频分析 - Gemini 原生视频分析与 Seedance 提示词生成",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
