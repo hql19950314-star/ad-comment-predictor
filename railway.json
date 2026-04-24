@@ -1,2 +1,17 @@
-{"$schema":"https://railway.app/railway.schema.json","build":{"builder":"NIXPACKS","nixpacks":{"plan":"nodejs"}},"deploy":{"numReplicas":1,"restartPolicyType":"ON_FAILURE","restartPolicyMaxRetries":10,"startCommand":"node server.js"}}
-// force-redeploy: 2026-04-24T16:00:04Z
+{
+  // force-redeploy-v3: 20260424-163219
+  //绻佹槦-瑙嗛鍒嗘瀽 v3.0
+  "\": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "nixpacks": {
+      "plan": "nodejs"
+    }
+  },
+  "deploy": {
+    "numReplicas": 1,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10,
+    "startCommand": "node server.js"
+  }
+}
