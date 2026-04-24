@@ -175,8 +175,8 @@
     <div class="settings-grid">
       <div class="form-group full">
         <label class="form-label">后端服务器地址</label>
-        <input type="text" class="form-input" id="serverUrlInput" placeholder="http://localhost:3000">
-        <div class="form-hint">默认: http://localhost:3000，生产环境改为实际地址</div>
+        <input type="text" class="form-input" id="serverUrlInput" placeholder="自动检测（当前页面地址）">
+        <div class="form-hint">留空则自动使用当前页面地址，本地开发填 http://localhost:3000</div>
       </div>
       <div class="form-group full">
         <label class="form-label">Gemini (Google) API Key</label>
@@ -329,7 +329,9 @@
 
 <script>
 // ── State ──
-let serverUrl = localStorage.getItem('ad_predictor_server') || 'http://localhost:3000';
+// Auto-detect: if page is on railway, use same origin; otherwise fall back to saved/local
+let serverUrl = localStorage.getItem('ad_predictor_server') ||
+  (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1' ? location.origin : 'http://localhost:3000');
 let apiKey = localStorage.getItem('gemini_api_key') || '';
 let currentFile = null;
 
