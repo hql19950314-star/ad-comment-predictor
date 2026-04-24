@@ -1,180 +1,75 @@
-# 广告评论预测系统 - 服务端版
+# ✨ 繁星-视频分析
 
-支持大视频文件（最大 200MB）的后端代理版本。
+Gemini 原生视频理解 + Seedance 2.0 提示词生成 + 舆情风险评估。
 
-## 📦 文件说明
+## 文件结构
 
 ```
 ad-predictor-server/
-├── package.json    # Node.js 依赖配置
-├── server.js       # 后端服务器
-├── index.html      # 前端界面
-└── README.md       # 本文件
+├── package.json   # Node.js 依赖
+├── server.js      # 后端服务（Gemini 视频分析）
+├── index.html     # 前端界面
+├── README.md
+└── railway.json
 ```
 
-## 🚀 快速开始
+## 快速开始
 
-### 1. 安装依赖
+### 本地运行
 
 ```powershell
 cd C:\Users\WinOS\.qclaw\workspace\ad-predictor-server
 npm install
-```
-
-### 2. 安装 FFmpeg
-
-本程序依赖 FFmpeg 提取视频帧。
-
-**Windows 安装方式（推荐）：**
-
-```powershell
-# 使用 winget（Windows 10/11 自带）
-winget install Gyan.FFmpeg
-
-# 或者使用 Chocolatey
-choco install ffmpeg
-```
-
-**手动安装：**
-1. 访问 https://www.gyan.dev/ffmpeg/builds/
-2. 下载 "ffmpeg-release-essentials.zip"
-3. 解压到 `C:\ffmpeg`
-4. 添加 `C:\ffmpeg\bin` 到系统 PATH
-
-**验证安装：**
-```powershell
-ffmpeg -version
-```
-
-### 3. 启动服务器
-
-```powershell
+# 设置 API Key
+$env:GEMINI_API_KEY="your_key"
 npm start
+# 浏览器打开 http://localhost:3000
 ```
 
-看到以下输出表示启动成功：
+### Railway 部署
 
-```
-╔════════════════════════════════════════════╗
-║   🎬 广告评论预测系统 - 后端代理服务器     ║
-╠════════════════════════════════════════════╣
-║   地址: http://localhost:3000              ║
-║   状态: 运行中                              ║
-║   支持视频大小: 最大 200MB                 ║
-╚════════════════════════════════════════════╝
-```
+1. Fork 或上传代码到 GitHub 仓库
+2. 在 [Railway](https://railway.app) 创建新项目，关联 GitHub
+3. 在项目 Variables 中添加 `GEMINI_API_KEY` 环境变量
+4. 部署完成后访问 `https://你的项目名-production.up.railway.app`
 
-### 4. 打开前端界面
+## 主要功能
 
-直接双击打开 `index.html`，或在浏览器访问：
+- 🎬 **视频 AI 分析** — Gemini 原生理解，无需抽帧
+- ✨ **Seedance 提示词** — 自动生成可用的 Seedance 2.0 提示词
+- 📝 **自定义模板** — 用户可上传自己的提示词模板
+- 🛡️ **舆情风险评估** — 预测视频发布后的舆论风险
 
-```
-file:///C:/Users/WinOS/.qclaw/workspace/ad-predictor-server/index.html
-```
-
-## 🔧 配置 API Key
-
-### 方式一：前端配置
-
-1. 打开网页，点击右上角 ⚙️ 设置
-2. 输入阿里云百炼 API Key
-3. 点击保存
-
-### 方式二：环境变量
-
-```powershell
-# Windows PowerShell（临时）
-$env:QWEN_API_KEY="你的API Key"
-npm start
-
-# Windows CMD（临时）
-set QWEN_API_KEY=你的API Key
-npm start
-```
-
-## 📝 API 端点
+## API
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
 | GET | `/health` | 健康检查 |
 | POST | `/api/analyze` | 分析视频 |
 
-### 示例请求
+## 环境变量
 
-```bash
-# 测试服务器状态
-curl http://localhost:3000/health
+| 变量 | 必填 | 说明 |
+|------|------|------|
+| `GEMINI_API_KEY` | ✅ | Google AI Studio API Key |
+| `GEMINI_MODEL` | ❌ | 模型名称（默认 gemini-2.5-flash-lite）|
+| `PORT` | ❌ | 端口（默认 3000）|
 
-# 分析视频
-curl -X POST http://localhost:3000/api/analyze \
-  -H "x-api-key: 你的API Key" \
-  -F "video=@test.mp4"
-```
+## 技术栈
 
-## ⚠️ 常见问题
+- **后端**: Node.js + Express + Multer
+- **AI**: Google Gemini（原生的视频理解）
+- **前端**: 纯 HTML/CSS/JS
 
-### FFmpeg not found
+## Seedance 2.0 提示词格式
 
-```
-Error: spawn ffmpeg ENOENT
-```
-
-**解决：** 安装 FFmpeg 并添加到 PATH，或重启终端/电脑。
-
-### 端口被占用
+工具生成的提示词遵循 Seedance 2.0 的 `@素材标记` 语法：
 
 ```
-Error: listen EADDRINUSE: address already in use :::3000
+@图片1作为主体角色，
+@视频1作为镜头语言参考，
+在{场景}中进行视频创作，
+{视觉风格}，{色调}，{氛围}，
+{运镜}，核心卖点：{卖点}，
+{背景音乐}
 ```
-
-**解决：** 修改端口：
-
-```powershell
-$env:PORT=3001
-npm start
-```
-
-### API Key 无效
-
-```
-InvalidApiKey: Invalid API key provided
-```
-
-**解决：** 检查 API Key 是否正确复制，在 https://bailian.console.aliyun.com 重新获取。
-
-### 视频提取帧失败
-
-```
-无法从视频中提取画面
-```
-
-**解决：**
-- 确认视频文件有效（用播放器能正常播放）
-- 尝试转换格式（用 HandBrake 转成 MP4 H.264）
-- 检查视频编码是否受支持
-
-## 🔒 安全说明
-
-- API Key 存储在浏览器 localStorage，仅本机可访问
-- 服务器默认监听 localhost，外部无法访问
-- 生产环境建议添加认证和 HTTPS
-
-## 📊 支持的视频格式
-
-| 格式 | 扩展名 | 支持情况 |
-|------|--------|----------|
-| MP4 | .mp4 | ✅ 最佳 |
-| MOV | .mov | ✅ 良好 |
-| WebM | .webm | ✅ 良好 |
-| AVI | .avi | ⚠️ 依赖编码 |
-
-## 🛠️ 技术栈
-
-- **后端**: Node.js + Express
-- **视频处理**: FFmpeg + fluent-ffmpeg
-- **AI 模型**: 阿里云百炼 Qwen-VL-Max
-- **前端**: 纯 HTML/CSS/JS（无需构建）
-
----
-
-有问题随时反馈！🎉
