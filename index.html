@@ -831,7 +831,7 @@
             <input type="text" class="form-input" id="tplNameInput" placeholder="模板名称">
           </div>
           <div class="form-group" style="flex:3">
-            <textarea class="form-input" id="tplContentInput" placeholder="模板内容，支持占位符：{product} {sellingPoints} {visualStyle} 等"></textarea>
+            <textarea class="form-input" id="tplContentInput" placeholder="模板内容，支持占位符：{product} {sellingPoints} {artStyle} {atmosphere} 等"></textarea>
           </div>
           <button class="btn btn-primary" id="addTplBtn">添加</button>
         </div>
@@ -925,10 +925,11 @@
       <div class="visual-grid">
         <div class="visual-item"><div class="visual-key">产品</div><div class="visual-val" id="vProduct">-</div></div>
         <div class="visual-item"><div class="visual-key">分类</div><div class="visual-val" id="vCategory">-</div></div>
-        <div class="visual-item"><div class="visual-key">氛围</div><div class="visual-val" id="vMood">-</div></div>
-        <div class="visual-item"><div class="visual-key">质量</div><div class="visual-val" id="vQuality">-</div></div>
-        <div class="visual-item" style="grid-column:span 2"><div class="visual-key">视觉风格</div><div class="visual-val" id="vStyle">-</div></div>
+        <div class="visual-item"><div class="visual-key">画风</div><div class="visual-val" id="vArtStyle">-</div></div>
+        <div class="visual-item"><div class="visual-key">氛围</div><div class="visual-val" id="vAtmosphere">-</div></div>
+        <div class="visual-item" style="grid-column:span 2"><div class="visual-key">画质</div><div class="visual-val" id="vQuality2">-</div></div>
         <div class="visual-item" style="grid-column:span 2"><div class="visual-key">目标受众</div><div class="visual-val" id="vAudience">-</div></div>
+        <div class="visual-item" style="grid-column:span 4"><div class="visual-key">角色</div><div class="visual-val" id="vCharacters">-</div></div>
         <div class="visual-item" style="grid-column:span 4"><div class="visual-key">核心卖点</div><div class="visual-tags" id="vSellingPoints"></div></div>
         <div class="visual-item" style="grid-column:span 4"><div class="visual-key">风险点</div><div class="visual-tags" id="vRiskPoints"></div></div>
       </div>
@@ -936,7 +937,7 @@
 
     <!-- Timeline -->
     <div class="timeline-card">
-      <div class="timeline-title">🕐 时间轴分析 <span style="font-size:11px;color:var(--text3);font-weight:400">按时间节点拆解画面与台词</span></div>
+      <div class="timeline-title">🎬 分镜脚本 <span style="font-size:11px;color:var(--text3);font-weight:400">按分镜拆解镜头、台词、动作、表情</span></div>
       <div class="timeline-list" id="timelineList"></div>
     </div>
 
@@ -973,8 +974,9 @@
     </div>
 
     <div class="launch-section">
-      <div class="launch-section-title">🎨 改变画风 <span class="hint">（单选）</span></div>
+      <div class="launch-section-title">🎨 改变画风 <span class="hint">（单选，默认保持原画风）</span></div>
       <div class="style-grid" id="styleGrid">
+        <div class="style-option" data-style="保持原画风"><span class="s-icon">🔄</span><span class="s-name">保持原画风</span></div>
         <div class="style-option" data-style="Q版"><span class="s-icon">🧸</span><span class="s-name">Q版</span></div>
         <div class="style-option" data-style="写实"><span class="s-icon">📷</span><span class="s-name">写实</span></div>
         <div class="style-option" data-style="3D渲染"><span class="s-icon">🧊</span><span class="s-name">3D渲染</span></div>
@@ -1032,11 +1034,11 @@ let selectedOpts = new Set();
 let templates = JSON.parse(localStorage.getItem('star_templates') || 'null') || [
   {
     name: 'Seedance 2.0 标准模板',
-    template: `@图片1作为主体角色，\n@视频1作为镜头语言参考，\n@音频1作为背景音乐参考，\n在{scene}中进行视频创作，\n{visualStyle}视觉风格，{colorTone}色调，{mood}氛围，\n{shotComposition}，\n{adTechnique}，\n核心卖点：{sellingPoints}，\n{BGM}背景音乐：{audioElements}`
+    template: `@图片1作为主体角色，\n@视频1作为镜头语言参考，\n@音频1作为背景音乐参考，\n在{scene}中进行视频创作，\n{artStyle}画风，{atmosphere}氛围，\n{cameraMovement}运镜，\n{adTechnique}，\n核心卖点：{sellingPoints}，\n{BGM}背景音乐：{audioElements}`
   },
   {
     name: '电影感模板',
-    template: `镜头：{shotComposition}，\n场景：{scene}，\n主体角色：@图片1，\n运镜参考：@视频1，\n{BGM}配乐：{audioElements}，\n{visualStyle}，{colorTone}色调，\n{mood}情绪基调，\n核心卖点：{sellingPoints}，\n{adTechnique}，\n光影：{lighting}，构图：{composition}`
+    template: `镜头：{shotType}，\n场景：{scene}，\n主体角色：@图片1，\n运镜参考：@视频1，\n{BGM}配乐：{audioElements}，\n{artStyle}画风，{atmosphere}氛围，\n核心卖点：{sellingPoints}，\n{adTechnique}，\n光影：{lighting}，构图：{composition}`
   }
 ];
 let activeTemplate = localStorage.getItem('star_active_tpl') || templates[0].name;
@@ -1123,7 +1125,7 @@ function bindEvents() {
     if (!opt) return;
     document.querySelectorAll('.style-option').forEach(o => o.classList.remove('selected'));
     opt.classList.add('selected');
-    selectedStyle = opt.dataset.style;
+    selectedStyle = opt.dataset.style === '保持原画风' ? '' : opt.dataset.style;
   };
 
   // Optimize selection (checkbox)
@@ -1291,14 +1293,15 @@ function showResults(data) {
   const v = data.visual || {};
   $('vProduct').textContent = v.product || '-';
   $('vCategory').textContent = v.category || '-';
-  $('vMood').textContent = v.mood || '-';
-  $('vQuality').textContent = v.videoQuality || '-';
-  $('vStyle').textContent = v.visualStyle || '-';
+  $('vArtStyle').textContent = v.overallStyle?.artStyle || '-';
+  $('vAtmosphere').textContent = v.overallStyle?.atmosphere || '-';
+  $('vQuality2').textContent = v.overallStyle?.quality || v.videoQuality || '-';
   $('vAudience').textContent = v.targetAudience || '-';
+  $('vCharacters').textContent = (v.characters || []).map(c => `${c.name}：${c.features}，${c.appearance}`).join('；') || '-';
   $('vSellingPoints').innerHTML = (v.sellingPoints || []).map(s => `<span class="tag">${esc(s)}</span>`).join('') || '-';
   $('vRiskPoints').innerHTML = (v.controversialElements || []).map(s => `<span class="tag risk">${esc(s)}</span>`).join('') || '<span class="tag">无</span>';
 
-  // Timeline
+  // Storyboard (was Timeline)
   const timeline = data.timeline || [];
   const timelinePrompts = data.timelinePrompts || [];
   $('timelineList').innerHTML = timeline.map((t, i) => {
@@ -1307,16 +1310,19 @@ function showResults(data) {
       <div class="timeline-node">
         <div class="timeline-time">${esc(t.timeRange)}</div>
         <div class="timeline-content">
-          <div class="tc-row"><span class="tc-label">画面</span><span class="tc-val">${esc(t.visual)}</span></div>
-          ${t.dialogue ? `<div class="tc-row"><span class="tc-label">台词</span><span class="tc-val dialogue">"${esc(t.dialogue)}"</span></div>` : ''}
+          <div class="tc-row"><span class="tc-label">镜头</span><span class="tc-val">${esc(t.shotType)}</span></div>
+          <div class="tc-row"><span class="tc-label">运镜</span><span class="tc-val">${esc(t.cameraMovement)}</span></div>
+          <div class="tc-row"><span class="tc-label">光效</span><span class="tc-val">${esc(t.lightAndMood)}</span></div>
           <div class="tc-row"><span class="tc-label">动作</span><span class="tc-val">${esc(t.action)}</span></div>
-          <div class="tc-row"><span class="tc-label">镜头</span><span class="tc-val">${esc(t.camera)}</span></div>
-          <div class="tc-row"><span class="tc-label">情绪</span><span class="tc-val">${esc(t.emotion)}</span></div>
+          ${t.dialogue ? `<div class="tc-row"><span class="tc-label">台词</span><span class="tc-val dialogue">${esc(t.dialogue)}</span></div>` : ''}
+          ${t.expression ? `<div class="tc-row"><span class="tc-label">表情</span><span class="tc-val">${esc(t.expression)}</span></div>` : ''}
+          ${t.tone ? `<div class="tc-row"><span class="tc-label">语气</span><span class="tc-val">${esc(t.tone)}</span></div>` : ''}
+          <div class="tc-row"><span class="tc-label">节奏</span><span class="tc-val">${esc(t.emotionRhythm)}</span></div>
           ${prompt ? `<div class="tc-prompt">✨ ${esc(prompt.prompt)}</div>` : ''}
         </div>
       </div>
     `;
-  }).join('') || '<div style="font-size:13px;color:var(--text3);padding:8px">无时间轴数据</div>';
+  }).join('') || '<div style="font-size:13px;color:var(--text3);padding:8px">无分镜数据</div>';
 
   // Seedance Prompt
   $('promptText').textContent = data.seedancePrompt || '-';
@@ -1344,7 +1350,6 @@ function showResults(data) {
 
 // ── Launch (Stage 3) ────────────────────────────────────────────────────────
 async function fireLaunch() {
-  if (!selectedStyle) { showToast('⚠️ 请先选择画风'); return; }
   if (!lastResult) { showToast('⚠️ 无分析数据'); return; }
 
   const btn = $('launchFireBtn');
@@ -1361,7 +1366,7 @@ async function fireLaunch() {
         visualData: lastResult.visual,
         timeline: lastResult.timeline,
         originalPrompt: lastResult.seedancePrompt,
-        artStyle: selectedStyle,
+        artStyle: selectedStyle || null,
         optimizeDirections: Array.from(selectedOpts),
         userTemplate: activeTpl || null
       }),
