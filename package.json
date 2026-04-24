@@ -1,7 +1,7 @@
 {
-  "name": "ad-predictor-server",
-  "version": "2.0.0",
-  "description": "广告评论预测系统 - Gemini 原生视频分析",
+  "name": "star-video-analyzer",
+  "version": "3.0.0",
+  "description": "繁星-视频分析 - Gemini 原生视频分析与 Seedance 提示词生成",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
