@@ -20,7 +20,14 @@ const os = require('os');
 const https = require('https');
 
 // Gemini API 配置（从环境变量读取，Render 上可设置）
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyAzJvAFev6wwIuAT-_BCtigsGGS_rElzLA';
+// API Key 必须通过环境变量配置，不要硬编码！（否则会被 Google 扫描禁用）
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+  console.error('❌ 错误: 未设置 GEMINI_API_KEY 环境变量');
+  console.error('   本地运行: set GEMINI_API_KEY=your_key && node server.js');
+  console.error('   Railway:  在 Variables 中添加 GEMINI_API_KEY');
+  process.exit(1);
+}
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
 
 const app = express();
