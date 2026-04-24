@@ -1,5 +1,5 @@
 /**
- * 繁星-视频分析 - 后端服务器 v4.0 (Gemini 版)
+ * 繁星-视频分析 - 后端服务器 v5.0 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -22,7 +22,7 @@ if (!GEMINI_API_KEY) {
   console.error('❌ 错误: 未设置 GEMINI_API_KEY 环境变量');
   process.exit(1);
 }
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -119,12 +119,12 @@ app.post('/api/analyze', upload.single('video'), async (req, res) => {
 app.post('/api/launch', async (req, res) => {
   try {
     const { visualData, timeline, originalPrompt, artStyle, optimizeDirections, userTemplate } = req.body;
-    if (!visualData || !timeline || !artStyle) {
+    if (!visualData || !timeline) {
       return res.status(400).json({ error: '缺少必要参数' });
     }
 
     console.log(`\n[${new Date().toISOString()}] 🚀 提示词发射`);
-    console.log(`画风: ${artStyle}, 优化: ${(optimizeDirections || []).join(', ')}`);
+    console.log(`画风: ${artStyle || '保持原画风'}, 优化: ${(optimizeDirections || []).join(', ')}`);
 
     const result = await stage3_launchPrompt(visualData, timeline, originalPrompt, artStyle, optimizeDirections || [], userTemplate);
 
@@ -189,54 +189,76 @@ function getErrorHint(msg) {
 
 // ── Stage 1: 视觉结构化分析 + 时间轴 ────────────────────────────────────────
 async function stage1_visualAnalysis(videoBase64, videoMimeType) {
-  const prompt = `你是一个专业的广告与视频内容分析师。仔细观看这个视频，从内容创作和营销角度进行深度分析。
+  const prompt = `你是一个专业的视频内容分析师。仔细观看这个视频，进行深度结构化分析。
 
-【重要】你需要按视频的时间节点逐一分析，每个时间节点包含：时间区间、画面描述、人物台词/旁白/口播内容、动作描述。
+【核心原则】
+优先保证分析准确、角色清晰、台词归属明确、镜头信息完整。
+
+【要求】
+1. 15秒内视频，时长、镜头运动严格跟视频一致，严格口型与台词100%精准匹配；超过15秒视频，不要写镜头时长。
+2. 输出以"分析准确、信息完整"为最高优先级，不要为了文案流畅牺牲角色、镜头、动作、台词、表情、语气等关键信息；无法确认的信息要保守描述，不要乱写。
+3. 多角色时，必须明确区分角色之间的互动、动作、台词、表情和语气，避免角色指代混乱。
+4. 必须严格区分"角色真实口播台词""旁白/画外音""路人议论""字幕文案"四类信息。
+5. 只有当视频中能明确看到角色口型与台词同步时，才能把该句判定为该角色真实口播台词。
+6. 若画面中没有明确口型对应，或该句更像介绍语、评论语、背景解说、群体议论，则优先标注为"旁白/画外音/路人议论"，不要强行归到角色头上。
+7. 若视频中出现字幕文字，但无法确认是否被说出，要区分"字幕文案"与"实际口播台词"，不得混写。
+8. 若视频中明确出现同一角色在连续画面里发生可见的服装变化、造型变化、特效换装、形象升级或由旧造型过渡到新造型，必须明确识别并写出这是"换装/变装/造型切换/特效变身"中的哪一种，不得漏掉。
+9. 只有当能够确认是同一角色在连续画面中完成造型变化时，才能标记为换装或变装；如果只是不同角色切换、不同人物出场、不同镜头拼接、不同场景切换，则不得误判为同一角色变装。
+10. 最终输出为中文。
 
 返回纯 JSON（不要 markdown 代码块）：
 {
+  "overallStyle": {
+    "artStyle": "整体画风（如实拍/二次元/3D渲染/水墨/像素/赛博朋克/日系动漫等）",
+    "quality": "画质特点（如电影级/高清/颗粒感/低像素等）",
+    "atmosphere": "整体氛围（如紧张/温馨/搞笑/悬疑/热血等）"
+  },
+  "characters": [
+    {
+      "name": "角色1（能辨认写名称，否则写角色A/B/C）",
+      "features": "角色特征描述",
+      "appearance": "服装/外观描述",
+      "expression": "表情特征",
+      "personality": "气质/性格"
+    }
+  ],
+  "scene": {
+    "type": "场景类型",
+    "keyElements": "关键元素",
+    "lighting": "光影特点",
+    "spatialAtmosphere": "空间氛围"
+  },
+  "storyboard": [
+    {
+      "shotNumber": 1,
+      "timeRange": "0:00-0:03",
+      "shotType": "特写/近景/中景/全景/远景",
+      "cameraMovement": "固定/推/拉/摇/移/跟/升降",
+      "lightAndMood": "光效方向，氛围描述",
+      "action": "明确写清角色1/角色2分别做了什么；若存在换装/变装/造型切换过程，必须直接写出",
+      "dialogue": "明确写清谁说了什么；角色真实口播需写清说话角色；非角色口播要标注为旁白/画外音/路人议论/字幕文案",
+      "expression": "明确写清角色表情变化",
+      "tone": "明确写清说话语气；旁白/议论/字幕也要按实际性质标注",
+      "emotionRhythm": "紧张/舒缓/压抑/欢快/悬疑等"
+    }
+  ],
   "product": "产品/品牌名（看不出写'未知'）",
   "category": "分类（游戏/美妆/食品/汽车/服饰/APP/教育/金融/电商/其他）",
-  "scene": "场景描述（20字内）",
   "mainContent": "视频主要内容和剧情（50字内）",
   "sellingPoints": ["核心卖点1", "卖点2", "卖点3"],
-  "visualStyle": "视觉风格（二次元/实拍/3D渲染/手绘/拼贴/电影感/纪录片风格等）",
-  "colorTone": "主色调描述",
-  "mood": "情绪氛围（热血/温馨/悬疑/搞笑/奢华/小清新/强节奏/感人等）",
   "targetAudience": "目标人群（年龄+性别+特征）",
   "adTechnique": "广告手法（明星代言/剧情植入/对比展示/UGC感/福利诱导/情感共鸣/悬念营销等）",
   "controversialElements": ["可能引发争议的元素1", "元素2（没有写[]）"],
   "textOnScreen": ["屏幕文字1", "文字2（没有写[]）"],
   "audioElements": "音频特点（BGM风格/有无台词/口播关键词）",
-  "shotComposition": "镜头构成（固定/手持/运镜/特写+全景组合等）",
-  "videoQuality": "制作质量（专业TVC/UGC感/短视频风/微电影等）",
-  "timeline": [
-    {
-      "timeRange": "0:00-0:03",
-      "scene": "这个时间段的场景描述",
-      "visual": "画面内容描述（人物、动作、表情、环境等）",
-      "dialogue": "这个时间段人物的台词/旁白/口播内容（没有则写空字符串）",
-      "action": "主要动作和运动描述",
-      "camera": "镜头运动（推/拉/摇/移/固定/特写等）",
-      "emotion": "这个时间段的情绪氛围"
-    },
-    {
-      "timeRange": "0:03-0:08",
-      "scene": "...",
-      "visual": "...",
-      "dialogue": "...",
-      "action": "...",
-      "camera": "...",
-      "emotion": "..."
-    }
-  ]
+  "videoQuality": "制作质量（专业TVC/UGC感/短视频风/微电影等）"
 }
 
 注意：
-- timeline 至少分4-8个节点，根据视频实际时长和内容变化来划分
-- 每个节点必须精确到时间区间（如"0:05-0:12"）
-- dialogue 字段必须写出人物说的台词、旁白、或口播的原文（尽量还原原话）
-- 如果某段没有台词/旁白，dialogue 写空字符串""`;
+- storyboard 至少分4-8个分镜，根据视频实际时长和内容变化来划分
+- 每个分镜必须精确到时间区间（如"0:05-0:12"）
+- dialogue 字段必须严格区分四类：角色口播/旁白画外音/路人议论/字幕文案，不要混淆
+- 无法确认的信息要保守描述，不要乱写`;
 
   const response = await geminiRequest(
     `/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
@@ -251,7 +273,7 @@ async function stage1_visualAnalysis(videoBase64, videoMimeType) {
 
   try {
     const result = JSON.parse(cleanJsonResponse(text));
-    console.log(`  → Stage 1 完成: ${result.product} / ${result.category} / 时间轴${result.timeline?.length || 0}节点`);
+    console.log(`  → Stage 1 完成: ${result.product} / ${result.category} / 分镜${result.storyboard?.length || 0}个 / 角色${result.characters?.length || 0}个`);
     return result;
   } catch (e) {
     console.error('  → Stage 1 解析失败:', text.substring(0, 300));
@@ -267,34 +289,51 @@ async function stage2_generatePromptAndRisk(visualData, userTemplate) {
   };
 
   const template = userTemplate || defaultTemplate;
-  const timelineStr = (visualData.timeline || []).map((t, i) =>
-    `  节点${i+1} [${t.timeRange}]:\n    画面: ${t.visual}\n    台词/旁白: ${t.dialogue || '（无）'}\n    动作: ${t.action}\n    镜头: ${t.camera}\n    情绪: ${t.emotion}`
+
+  // 构建角色描述
+  const charactersStr = (visualData.characters || []).map((c, i) =>
+    `  角色${i+1}：${c.name}，${c.features}，${c.appearance}，${c.expression}，${c.personality}`
   ).join('\n');
 
+  // 构建分镜脚本
+  const storyboardStr = (visualData.storyboard || []).map((s, i) =>
+    `  分镜${i+1} [${s.timeRange}]:\n    镜头: ${s.shotType}\n    运镜: ${s.cameraMovement}\n    光效/氛围: ${s.lightAndMood}\n    动作: ${s.action}\n    台词: ${s.dialogue}\n    表情: ${s.expression}\n    语气: ${s.tone}\n    情绪节奏: ${s.emotionRhythm}`
+  ).join('\n');
+
+  // 构建场景描述
+  const sceneInfo = visualData.scene ? `${visualData.scene.type}，${visualData.scene.keyElements}，${visualData.scene.lighting}，${visualData.scene.spatialAtmosphere}` : '';
+
+  // 构建整体风格
+  const styleInfo = visualData.overallStyle ? `${visualData.overallStyle.artStyle}，${visualData.overallStyle.quality}，${visualData.overallStyle.atmosphere}` : '';
+
   const stage2Prompt = `你是一个顶尖的广告创意分析师和 AI 视频提示词工程师。
+
+【整体风格】
+${styleInfo}
+
+【角色】
+${charactersStr}
+
+【场景】
+${sceneInfo}
 
 【视频分析结果】
 - 产品：${visualData.product}
 - 分类：${visualData.category}
-- 场景：${visualData.scene}
 - 主要内容：${visualData.mainContent}
 - 卖点：${visualData.sellingPoints.join('、')}
-- 视觉风格：${visualData.visualStyle}
-- 主色调：${visualData.colorTone}
-- 情绪氛围：${visualData.mood}
 - 目标人群：${visualData.targetAudience}
 - 广告手法：${visualData.adTechnique}
 - 争议点：${visualData.controversialElements?.join('、') || '无'}
-- 镜头构成：${visualData.shotComposition}
 - 制作质量：${visualData.videoQuality}
 - 音频特点：${visualData.audioElements}
 
-【时间轴分析】
-${timelineStr}
+【分镜脚本】
+${storyboardStr}
 
 【你的任务】
-1. 根据时间轴的每个节点，生成对应时间段的 Seedance 2.0 提示词，确保提示词与该时间段的台词/旁白、画面、动作精确匹配
-2. 生成一段整体提示词，将所有节点串联成流畅的完整视频描述
+1. 根据分镜脚本的每个分镜，生成对应时间段的 Seedance 2.0 提示词，确保提示词与该分镜的台词归属、画面、动作、镜头精确匹配
+2. 生成一段整体提示词，将所有分镜串联成流畅的完整视频描述
 3. 评估舆情风险
 
 【用户提示词模板】
@@ -303,20 +342,21 @@ ${timelineStr}
 ${template.template}
 
 【Seedance 提示词写作规范】
-- 每个时间节点的提示词必须包含：该节点的场景、人物动作、台词旁白对应的画面感、镜头运动、色调和氛围
+- 每个分镜的提示词必须包含：角色动作、台词归属（区分口播/旁白/议论/字幕）、镜头运动、色调和氛围
+- 严格区分"角色真实口播台词""旁白/画外音""路人议论""字幕文案"四类信息
 - 用自然流畅的中文描述，融入核心卖点
 - 确保描述具体生动，适合 AI 视频模型理解
-- 时间节点之间的提示词要有过渡和连贯性
+- 分镜之间的提示词要有过渡和连贯性
 
 返回纯 JSON（不要 markdown 代码块）：
 {
   "timelinePrompts": [
     {
       "timeRange": "0:00-0:03",
-      "prompt": "该时间段的 Seedance 提示词，包含画面、动作、台词对应画面感、镜头、氛围等"
+      "prompt": "该时间段的 Seedance 提示词，包含画面、动作、台词归属、镜头、氛围等"
     }
   ],
-  "seedancePrompt": "完整的 Seedance 2.0 提示词，将所有时间节点串联为一段完整、流畅、自然的中文描述，无markdown符号",
+  "seedancePrompt": "完整的 Seedance 2.0 提示词，将所有分镜串联为一段完整、流畅、自然的中文描述，无markdown符号",
   "promptBreakdown": {
     "主体": "主体描述",
     "场景": "场景描述",
@@ -349,10 +389,10 @@ ${template.template}
 
   try {
     const result = JSON.parse(cleanJsonResponse(text));
-    console.log('  → Stage 2 完成，时间轴提示词:', result.timelinePrompts?.length || 0, '节点');
+    console.log('  → Stage 2 完成，分镜提示词:', result.timelinePrompts?.length || 0, '个');
     return {
       visual: visualData,
-      timeline: visualData.timeline || [],
+      timeline: visualData.storyboard || [],
       timelinePrompts: result.timelinePrompts || [],
       seedancePrompt: result.seedancePrompt,
       promptBreakdown: result.promptBreakdown || {},
@@ -368,7 +408,7 @@ ${template.template}
 // ── Stage 3: 提示词发射 — 按画风+优化方向重新生成 ──────────────────────────
 async function stage3_launchPrompt(visualData, timeline, originalPrompt, artStyle, optimizeDirections, userTemplate) {
   const timelineStr = (timeline || []).map((t, i) =>
-    `  节点${i+1} [${t.timeRange}]:\n    画面: ${t.visual}\n    台词/旁白: ${t.dialogue || '（无）'}\n    动作: ${t.action}\n    镜头: ${t.camera}\n    情绪: ${t.emotion}`
+    `  分镜${i+1} [${t.timeRange}]:\n    镜头: ${t.shotType}\n    运镜: ${t.cameraMovement}\n    光效/氛围: ${t.lightAndMood}\n    动作: ${t.action}\n    台词: ${t.dialogue}\n    表情: ${t.expression}\n    语气: ${t.tone}\n    情绪节奏: ${t.emotionRhythm}`
   ).join('\n');
 
   const optimizeStr = optimizeDirections.length > 0
@@ -379,55 +419,28 @@ async function stage3_launchPrompt(visualData, timeline, originalPrompt, artStyl
     ? `\n\n【用户提示词模板】\n模板名称：${userTemplate.name}\n模板内容：\n${userTemplate.template}`
     : '';
 
-  const stage3Prompt = `你是一个顶尖的 AI 视频提示词工程师。现在需要你根据用户选择的画风和优化方向，重新生成完整的 Seedance 2.0 视频提示词。
+  const styleBlock = artStyle
+    ? `\n【目标画风】${artStyle}\n\n【你的任务】\n1. 将视频整体画风切换为「${artStyle}」风格\n2. 按优化方向对内容进行调整\n3. 为每个时间节点生成新的提示词，确保台词/旁白对应的画面在新画风下的合理呈现\n4. 生成完整的串联提示词\n\n【画风转换指南】\n- Q版/二次元：角色变为Q版大头小身，圆润可爱，线条简化，色彩明快\n- 写实：追求真实质感，注重光影细节，皮肤纹理真实，环境写实\n- 3D渲染：立体感强，材质质感突出，光影全局光照，类似皮克斯/梦工厂风格\n- 真人：真人出演，注重演员表情演技，服化道精致，自然光感\n- 赛博朋克：霓虹灯光，科技感，暗色调+高饱和度点缀，全息投影元素\n- 水墨风：中国水墨画风格，留白意境，笔触感，淡雅色调\n- 像素风：8-bit/16-bit 像素艺术，复古游戏感，低分辨率美学\n- 日系动漫：日式动画风格，大眼细脸，光影柔和，色彩饱和，表情夸张\n\n返回纯 JSON（不要 markdown 代码块）：\n{\n  "artStyle": "${artStyle}",\n  "timelinePrompts": [\n    {\n      "timeRange": "0:00-0:03",\n      "prompt": "该时间段在新画风+优化方向下的 Seedance 提示词"\n    }\n  ],\n  "seedancePrompt": "完整的重新生成的 Seedance 2.0 提示词，将所有时间节点在${artStyle}风格下串联为一段完整、流畅、自然的中文描述",\n  "changesSummary": "简述相比原提示词的主要变化（50字内）"\n}`
+    : `\n【你的任务】\n1. 保持原视频的画风和视觉风格，仅按优化方向对内容进行调整\n2. 为每个时间节点生成优化后的提示词，保持原有画面风格\n3. 生成完整的串联提示词\n\n返回纯 JSON（不要 markdown 代码块）：\n{\n  "artStyle": "保持原画风",\n  "timelinePrompts": [\n    {\n      "timeRange": "0:00-0:03",\n      "prompt": "该时间段在优化方向下的 Seedance 提示词"\n    }\n  ],\n  "seedancePrompt": "完整的重新生成的 Seedance 2.0 提示词，保持原画风，将所有时间节点按优化方向串联为一段完整、流畅、自然的中文描述",\n  "changesSummary": "简述相比原提示词的主要变化（50字内）"\n}`;
+
+  const stage3Prompt = `你是一个顶尖的 AI 视频提示词工程师。现在需要你根据用户的选择，重新生成完整的 Seedance 2.0 视频提示词。
 
 【原始视频分析】
 - 产品：${visualData.product}
 - 分类：${visualData.category}
-- 场景：${visualData.scene}
 - 主要内容：${visualData.mainContent}
 - 卖点：${visualData.sellingPoints?.join('、')}
 - 目标人群：${visualData.targetAudience}
 - 广告手法：${visualData.adTechnique}
+- 整体风格：${visualData.overallStyle ? visualData.overallStyle.artStyle + '，' + visualData.overallStyle.atmosphere : ''}
+- 角色：${(visualData.characters || []).map(c => c.name).join('、')}
 
-【时间轴分析】
+【分镜脚本】
 ${timelineStr}
 
 【原始提示词】
 ${originalPrompt}
-${optimizeStr}${templateStr}
-
-【目标画风】${artStyle}
-
-【你的任务】
-1. 将视频整体画风切换为「${artStyle}」风格
-2. 按优化方向对内容进行调整
-3. 为每个时间节点生成新的提示词，确保台词/旁白对应的画面在新画风下的合理呈现
-4. 生成完整的串联提示词
-
-【画风转换指南】
-- Q版/二次元：角色变为Q版大头小身，圆润可爱，线条简化，色彩明快
-- 写实：追求真实质感，注重光影细节，皮肤纹理真实，环境写实
-- 3D渲染：立体感强，材质质感突出，光影全局光照，类似皮克斯/梦工厂风格
-- 真人：真人出演，注重演员表情演技，服化道精致，自然光感
-- 赛博朋克：霓虹灯光，科技感，暗色调+高饱和度点缀，全息投影元素
-- 水墨风：中国水墨画风格，留白意境，笔触感，淡雅色调
-- 像素风：8-bit/16-bit 像素艺术，复古游戏感，低分辨率美学
-
-返回纯 JSON（不要 markdown 代码块）：
-{
-  "artStyle": "${artStyle}",
-  "timelinePrompts": [
-    {
-      "timeRange": "0:00-0:03",
-      "prompt": "该时间段在新画风+优化方向下的 Seedance 提示词"
-    }
-  ],
-  "seedancePrompt": "完整的重新生成的 Seedance 2.0 提示词，将所有时间节点在${artStyle}风格下串联为一段完整、流畅、自然的中文描述",
-  "changesSummary": "简述相比原提示词的主要变化（50字内）"
-}`;
-
-  console.log('  → Stage 3: 提示词发射...');
+${optimizeStr}${templateStr}${styleBlock}`;
 
   const response = await geminiRequest(
     `/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
@@ -458,7 +471,7 @@ ${optimizeStr}${templateStr}
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析  v4.0                   ║');
+  console.log('║   🌟 繁星-视频分析  v5.0                   ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log(`║   地址: http://localhost:${PORT.toString().padEnd(20)}║`);
   console.log('║   模型: ' + GEMINI_MODEL.padEnd(32) + '║');
