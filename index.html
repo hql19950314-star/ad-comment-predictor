@@ -1029,13 +1029,13 @@
   <!-- Image Analysis Section -->
   <div class="img-section" id="imgSection">
     <div class="img-section-header" id="imgSectionHeader">
-      <h3>🖼️ 图片复刻分析 <span style="font-size:11px;color:var(--text3);font-weight:400">GPT-4o Vision</span></h3>
+      <h3>🖼️ 图片复刻分析 <span style="font-size:11px;color:var(--text3);font-weight:400">Gemini Vision</span></h3>
       <span class="img-section-arrow" id="imgArrow">▼</span>
     </div>
     <div class="img-section-body" id="imgSectionBody">
       <div class="img-no-key" id="imgNoKey" style="display:none">
         图片分析功能需要配置 OpenAI API Key<br>
-        请在服务器环境变量中设置 <code>OPENAI_API_KEY</code>
+        图片分析使用 Gemini API，与视频分析共用同一 Key
       </div>
       <div id="imgContent">
         <!-- Image Upload -->
@@ -1084,7 +1084,7 @@
         <!-- Loading -->
         <div class="img-loading" id="imgLoading">
           <div class="spinner" style="margin:0 auto"></div>
-          <div class="img-loading-text">GPT-4o 正在分析图片...</div>
+          <div class="img-loading-text">Gemini 正在分析图片...</div>
         </div>
 
         <!-- Result -->
