@@ -23,6 +23,8 @@ if (!GEMINI_API_KEY) {
   process.exit(1);
 }
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY; // 可选，图片分析用 GPT-4o
+const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4o';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -56,12 +58,33 @@ const upload = multer({
   }
 });
 
+const imageStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname) || '.jpg';
+    cb(null, `image-${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`);
+  }
+});
+const imageUpload = multer({
+  storage: imageStorage,
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
+  fileFilter: (req, file, cb) => {
+    const validExts = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (validExts.includes(ext) || file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('不支持的图片格式，请上传 JPG/PNG/WebP/GIF'));
+    }
+  }
+});
+
 // ── Static Files ─────────────────────────────────────────────────────────────
 app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '4.0.0', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.1.0', timestamp: new Date().toISOString(), imageAnalysis: !!OPENAI_API_KEY });
 });
 
 app.get('/', (req, res) => {
@@ -134,6 +157,212 @@ app.post('/api/launch', async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
+// ── Image Analysis Endpoint ────────────────────────────────────────────────
+app.post('/api/analyze-image', imageUpload.single('image'), async (req, res) => {
+  let imagePath = null;
+  try {
+    if (!OPENAI_API_KEY) return res.status(503).json({ error: '图片分析功能需要配置 OPENAI_API_KEY 环境变量' });
+    if (!req.file) return res.status(400).json({ error: '请上传图片文件' });
+    imagePath = req.file.path;
+
+    const aspectRatio = req.body.aspectRatio || '1:1';
+    const quality = req.body.quality || 'medium';
+    const customPrompt = req.body.customPrompt || '';
+
+    console.log(`\n[${new Date().toISOString()}] 🖼️ 图片分析开始`);
+    console.log(`文件: ${req.file.originalname} (${(req.file.size / 1024 / 1024).toFixed(2)} MB)`);
+    console.log(`参数: 比例=${aspectRatio}, 清晰度=${quality}`);
+
+    const result = await analyzeImageWithGPT4o(imagePath, req.file.mimetype, aspectRatio, quality, customPrompt);
+
+    if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+    console.log('✅ 图片分析完成\n');
+    res.json({ success: true, data: result });
+
+  } catch (error) {
+    console.error('❌ 图片分析失败:', error.message);
+    if (imagePath && fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/analyze-image-iterate', async (req, res) => {
+  try {
+    if (!OPENAI_API_KEY) return res.status(503).json({ error: '图片分析功能需要配置 OPENAI_API_KEY 环境变量' });
+
+    const { previousPrompt, modifyInstruction, aspectRatio, quality, breakdown } = req.body;
+    if (!previousPrompt || !modifyInstruction) {
+      return res.status(400).json({ error: '缺少必要参数' });
+    }
+
+    console.log(`\n[${new Date().toISOString()}] 🔄 图片迭代分析`);
+    console.log(`修改指令: ${modifyInstruction}`);
+
+    const result = await iterateImagePrompt(previousPrompt, modifyInstruction, breakdown, aspectRatio || '1:1', quality || 'medium');
+
+    console.log('✅ 迭代完成\n');
+    res.json({ success: true, data: result });
+
+  } catch (error) {
+    console.error('❌ 迭代失败:', error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ── OpenAI API 调用 ────────────────────────────────────────────────────────
+function openaiRequest(endpoint, body) {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify(body);
+    const options = {
+      hostname: 'api.openai.com',
+      path: endpoint,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Length': Buffer.byteLength(data)
+      }
+    };
+    const req = https.request(options, (resp) => {
+      let responseData = '';
+      resp.on('data', (chunk) => responseData += chunk);
+      resp.on('end', () => {
+        try {
+          const parsed = JSON.parse(responseData);
+          if (resp.statusCode >= 400) {
+            reject(new Error(parsed.error?.message || `OpenAI HTTP ${resp.statusCode}`));
+          } else {
+            resolve(parsed);
+          }
+        } catch (e) {
+          reject(new Error(`OpenAI 响应解析失败: ${responseData.substring(0, 200)}`));
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(data);
+    req.end();
+  });
+}
+
+async function analyzeImageWithGPT4o(imagePath, mimeType, aspectRatio, quality, customPrompt) {
+  const imageBuffer = fs.readFileSync(imagePath);
+  const base64 = imageBuffer.toString('base64');
+
+  const qualityMap = { low: '低清/草图感', medium: '标准清晰', high: '高清/精细' };
+
+  const systemPrompt = `你是一个专业的AI绘画复刻专家。你的任务是根据用户提供的参考图片，生成高质量的AI绘画复刻提示词。
+
+【核心原则】
+1. 提示词要具体、精确、有画面感，能准确还原参考图的构图、风格、色调
+2. 使用中文描述，语言自然流畅，避免生硬的关键词堆砌
+3. 关注细节：光影、质感、构图、色彩、氛围
+4. 按以下结构输出：主体描述 → 场景环境 → 动作/姿态 → 风格/画质 → 色调/光影 → 补充细节
+5. 不要出现"AI"、"人工智能"、"提示词"等元描述词汇
+6. 保持描述的客观性，如实地描述图中可见内容`;
+
+  const userPrompt = `请分析这张图片，生成AI绘画复刻提示词。
+
+【目标参数】
+- 图片比例：${aspectRatio}
+- 清晰度要求：${qualityMap[quality] || quality}${customPrompt ? '\n- 用户额外要求：' + customPrompt : ''}
+
+【输出格式】
+请严格按以下 JSON 格式返回（不要 markdown 代码块）：
+{
+  "prompt": "完整的中文复刻描述，一段流畅的文字，包含主体、场景、风格、色调、光影、氛围等关键信息，适合直接用于AI绘画工具",
+  "breakdown": {
+    "主体": "画面主体的详细描述",
+    "场景": "背景/环境描述",
+    "动作": "人物动作/姿态（如无人物写'无'）",
+    "风格": "画风/视觉风格",
+    "色调": "色调/配色描述",
+    "光影": "光影效果描述",
+    "细节": "值得注意的细节特征"
+  }
+}
+
+请仔细观察图片中的每一个视觉元素，确保复刻描述能忠实还原原图的精髓。`;
+
+  const response = await openaiRequest('/v1/chat/completions', {
+    model: OPENAI_MODEL,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: userPrompt },
+          { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}`, detail: 'high' } }
+        ]
+      }
+    ],
+    max_tokens: 1500,
+    temperature: 0.7
+  });
+
+  const content = response.choices?.[0]?.message?.content;
+  if (!content) throw new Error('GPT-4o 返回为空');
+
+  try {
+    return JSON.parse(cleanJsonResponse(content));
+  } catch (e) {
+    console.error('  → 图片分析 JSON 解析失败，尝试提取纯文本');
+    // Fallback: return raw text as prompt
+    return { prompt: content.replace(/```json?\s*/g, '').replace(/```/g, '').trim(), breakdown: {} };
+  }
+}
+
+async function iterateImagePrompt(previousPrompt, modifyInstruction, previousBreakdown, aspectRatio, quality) {
+  const qualityMap = { low: '低清/草图感', medium: '标准清晰', high: '高清/精细' };
+
+  const userPrompt = `请根据修改指令，调整以下复刻提示词。
+
+【原始提示词】
+${previousPrompt}
+
+${previousBreakdown ? `【原始分析】\n${JSON.stringify(previousBreakdown, null, 2)}` : ''}
+
+【修改指令】
+${modifyInstruction}
+
+【目标参数】
+- 图片比例：${aspectRatio}
+- 清晰度要求：${qualityMap[quality] || quality}
+
+请输出调整后的完整 JSON（不要 markdown 代码块）：
+{
+  "prompt": "调整后的完整中文复刻描述",
+  "breakdown": {
+    "主体": "调整后的主体描述",
+    "场景": "调整后的场景描述",
+    "动作": "调整后的动作描述",
+    "风格": "调整后的风格描述",
+    "色调": "调整后的色调描述",
+    "光影": "调整后的光影描述",
+    "细节": "调整后的细节描述"
+  }
+}`;
+
+  const response = await openaiRequest('/v1/chat/completions', {
+    model: OPENAI_MODEL,
+    messages: [
+      { role: 'system', content: '你是AI绘画复刻专家，擅长根据反馈调整和优化复刻提示词。输出纯JSON。' },
+      { role: 'user', content: userPrompt }
+    ],
+    max_tokens: 1500,
+    temperature: 0.7
+  });
+
+  const content = response.choices?.[0]?.message?.content;
+  if (!content) throw new Error('迭代生成返回为空');
+
+  try {
+    return JSON.parse(cleanJsonResponse(content));
+  } catch (e) {
+    return { prompt: content.replace(/```json?\s*/g, '').replace(/```/g, '').trim(), breakdown: previousBreakdown || {} };
+  }
+}
 
 // ═══════════════════════════════════════════════════════════════
 //  Gemini API 调用
@@ -471,7 +700,7 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析  v5.0                   ║');
+  console.log('║   🌟 繁星-视频分析+图片分析  v5.1              ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log(`║   地址: http://localhost:${PORT.toString().padEnd(20)}║`);
   console.log('║   模型: ' + GEMINI_MODEL.padEnd(32) + '║');

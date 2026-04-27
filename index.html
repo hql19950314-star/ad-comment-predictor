@@ -776,6 +776,173 @@
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast-icon { font-size: 18px; }
 
+  /* ── Image Analysis Section ──────────────────────────────────── */
+  .img-section {
+    margin-bottom: 36px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .img-section-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .img-section-header:hover { background: var(--card); }
+  .img-section-header h3 {
+    font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .img-section-arrow {
+    font-size: 14px; color: var(--text3);
+    transition: transform 0.3s;
+  }
+  .img-section-arrow.open { transform: rotate(180deg); }
+  .img-section-body {
+    padding: 24px;
+    display: none;
+  }
+  .img-section-body.open { display: block; }
+  .img-upload-zone {
+    border: 1.5px dashed var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--card);
+    position: relative;
+  }
+  .img-upload-zone:hover, .img-upload-zone.drag {
+    border-color: var(--blue);
+    background: var(--card2);
+  }
+  .img-upload-icon { font-size: 40px; margin-bottom: 12px; display: block; }
+  .img-upload-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .img-upload-sub { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
+  .img-params {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .img-param-group { display: flex; flex-direction: column; gap: 4px; }
+  .img-param-label { font-size: 12px; color: var(--text3); font-weight: 500; }
+  .img-param-select {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .img-param-select:focus { border-color: var(--blue); }
+  .img-analyze-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--blue), #2563eb);
+    color: #fff; border: none;
+    border-radius: 10px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: var(--transition);
+    font-family: inherit;
+    box-shadow: 0 4px 16px rgba(74,158,255,0.35);
+    margin-top: 12px;
+  }
+  .img-analyze-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(74,158,255,0.5); }
+  .img-analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .img-preview-wrap {
+    display: none; margin-bottom: 20px;
+  }
+  .img-preview-wrap.show { display: block; }
+  .img-preview-box {
+    position: relative; display: inline-block; max-width: 320px;
+    border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+  }
+  .img-preview-box img { width: 100%; display: block; max-height: 240px; object-fit: contain; background: #000; }
+  .img-preview-close {
+    position: absolute; top: 8px; right: 8px;
+    width: 28px; height: 28px;
+    background: rgba(0,0,0,0.7); border: none;
+    border-radius: 50%; color: #fff; font-size: 14px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .img-loading {
+    display: none; text-align: center; padding: 36px 20px;
+  }
+  .img-loading.show { display: block; }
+  .img-loading-text { font-size: 14px; color: var(--text2); margin-top: 12px; }
+  .img-result {
+    display: none; margin-top: 20px;
+  }
+  .img-result.show { display: block; }
+  .img-prompt-area {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    width: 100%;
+    min-height: 120px;
+    max-height: 300px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+    font-family: inherit;
+    margin-bottom: 14px;
+  }
+  .img-prompt-area:focus { border-color: var(--blue); }
+  .img-breakdown {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    margin-bottom: 14px;
+  }
+  .img-breakdown-item {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .img-bd-key { font-size: 11px; color: var(--text3); margin-bottom: 4px; font-weight: 500; }
+  .img-bd-val { font-size: 13px; color: var(--text); line-height: 1.4; }
+  .img-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .img-iterate-section {
+    margin-top: 16px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .img-iterate-section.show { display: block; }
+  .img-iterate-input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text); font-size: 13px;
+    width: 100%; outline: none;
+    font-family: inherit; margin-bottom: 10px;
+  }
+  .img-iterate-input:focus { border-color: var(--blue); }
+  .img-iterate-input::placeholder { color: var(--text3); }
+  .img-no-key {
+    padding: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text3);
+    line-height: 1.8;
+  }
+  .img-no-key code {
+    background: var(--card);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  #imgFileInput { display: none; }
+
   /* ── Responsive ───────────────────────────────────────────────── */
   @media (max-width: 860px) {
     .preview-grid { grid-template-columns: 1fr; }
@@ -805,7 +972,7 @@
       <div class="logo-icon">✨</div>
       <div>
         <div class="logo-name">繁星 <em>·</em> 视频分析</div>
-        <div class="logo-sub">AI驱动的视频内容洞察</div>
+        <div class="logo-sub">AI驱动的视频分析 & 图片复刻</div>
       </div>
     </div>
     <div class="hdr-right">
@@ -858,6 +1025,87 @@
     <div class="upload-hint">支持 MP4 · MOV · WebM · AVI &nbsp;·&nbsp; 最大 200MB</div>
   </div>
   <input type="file" id="fileInput" accept="video/*">
+
+  <!-- Image Analysis Section -->
+  <div class="img-section" id="imgSection">
+    <div class="img-section-header" id="imgSectionHeader">
+      <h3>🖼️ 图片复刻分析 <span style="font-size:11px;color:var(--text3);font-weight:400">GPT-4o Vision</span></h3>
+      <span class="img-section-arrow" id="imgArrow">▼</span>
+    </div>
+    <div class="img-section-body" id="imgSectionBody">
+      <div class="img-no-key" id="imgNoKey" style="display:none">
+        图片分析功能需要配置 OpenAI API Key<br>
+        请在服务器环境变量中设置 <code>OPENAI_API_KEY</code>
+      </div>
+      <div id="imgContent">
+        <!-- Image Upload -->
+        <div class="img-upload-zone" id="imgUploadZone">
+          <span class="img-upload-icon">🖼️</span>
+          <div class="img-upload-title">上传参考图片</div>
+          <div class="img-upload-sub">支持 JPG · PNG · WebP · GIF · BMP</div>
+        </div>
+        <input type="file" id="imgFileInput" accept="image/*">
+
+        <!-- Image Preview -->
+        <div class="img-preview-wrap" id="imgPreviewWrap">
+          <div class="img-preview-box">
+            <img id="imgPreview" src="">
+            <button class="img-preview-close" id="imgPreviewClose">✕</button>
+          </div>
+        </div>
+
+        <!-- Parameters -->
+        <div class="img-params" id="imgParams" style="display:none">
+          <div class="img-param-group">
+            <label class="img-param-label">📐 图片比例</label>
+            <select class="img-param-select" id="imgAspect">
+              <option value="1:1">1:1（正方形）</option>
+              <option value="16:9">16:9（横屏）</option>
+              <option value="9:16">9:16（竖屏）</option>
+              <option value="4:3">4:3（标准）</option>
+              <option value="3:4">3:4（竖版标准）</option>
+            </select>
+          </div>
+          <div class="img-param-group">
+            <label class="img-param-label">🎨 清晰度</label>
+            <select class="img-param-select" id="imgQuality">
+              <option value="medium">标准清晰</option>
+              <option value="high">高清精细</option>
+              <option value="low">低清草图</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Analyze Button -->
+        <button class="img-analyze-btn" id="imgAnalyzeBtn" style="display:none" disabled>
+          🔍 开始图片分析
+        </button>
+
+        <!-- Loading -->
+        <div class="img-loading" id="imgLoading">
+          <div class="spinner" style="margin:0 auto"></div>
+          <div class="img-loading-text">GPT-4o 正在分析图片...</div>
+        </div>
+
+        <!-- Result -->
+        <div class="img-result" id="imgResult">
+          <div class="prompt-text" id="imgPromptText" style="max-height:240px">-</div>
+          <div class="img-breakdown" id="imgBreakdown"></div>
+          <div class="img-actions">
+            <button class="btn-copy" id="imgCopyBtn">📋 复制提示词</button>
+            <button class="btn-export" id="imgExportBtn">💾 保存到本地</button>
+            <button class="btn-ghost" id="imgIterateToggle" style="font-size:13px">🔄 迭代优化</button>
+          </div>
+          <div class="img-iterate-section" id="imgIterateSection">
+            <input type="text" class="img-iterate-input" id="imgIterateInput" placeholder="输入修改指令，如：把背景换成海边、角色改为男性、增加星空元素...">
+            <button class="img-analyze-btn" id="imgIterateBtn" style="margin-top:0;background:linear-gradient(135deg,var(--purple),#7c3aed)">
+              🔄 重新生成
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Video Preview -->
   <div class="preview" id="previewSection">
@@ -1048,6 +1296,7 @@ function init() {
   $('serverUrlInput').value = serverUrl;
   renderTemplates();
   bindEvents();
+  initImageAnalysis();
   testServer();
 }
 
@@ -1432,6 +1681,191 @@ function showToast(msg) {
   $('tText').textContent = msg;
   $('toast').classList.add('show');
   setTimeout(() => $('toast').classList.remove('show'), 4000);
+}
+
+// ── Image Analysis ─────────────────────────────────────────────────────────
+let imgFile = null;
+let imgResult = null;
+let imgAnalysisAvailable = false;
+
+function initImageAnalysis() {
+  // Check if server supports image analysis
+  checkImageSupport();
+
+  // Toggle section
+  $('imgSectionHeader').onclick = () => {
+    const body = $('imgSectionBody');
+    const arrow = $('imgArrow');
+    body.classList.toggle('open');
+    arrow.classList.toggle('open');
+  };
+
+  // Upload
+  $('imgUploadZone').onclick = () => $('imgFileInput').click();
+  $('imgFileInput').onchange = e => handleImageFile(e.target.files[0]);
+  $('imgUploadZone').ondragover = e => { e.preventDefault(); $('imgUploadZone').classList.add('drag'); };
+  $('imgUploadZone').ondragleave = () => $('imgUploadZone').classList.remove('drag');
+  $('imgUploadZone').ondrop = e => {
+    e.preventDefault();
+    $('imgUploadZone').classList.remove('drag');
+    handleImageFile(e.dataTransfer.files[0]);
+  };
+
+  // Preview close
+  $('imgPreviewClose').onclick = () => {
+    imgFile = null;
+    $('imgPreviewWrap').classList.remove('show');
+    $('imgUploadZone').style.display = '';
+    $('imgParams').style.display = 'none';
+    $('imgAnalyzeBtn').style.display = 'none';
+    $('imgAnalyzeBtn').disabled = true;
+    $('imgFileInput').value = '';
+  };
+
+  // Analyze
+  $('imgAnalyzeBtn').onclick = startImageAnalysis;
+
+  // Copy & Export
+  $('imgCopyBtn').onclick = () => copyText($('imgPromptText').textContent);
+  $('imgExportBtn').onclick = () => exportText($('imgPromptText').textContent, 'image-prompt.txt');
+
+  // Iterate
+  $('imgIterateToggle').onclick = () => $('imgIterateSection').classList.toggle('show');
+  $('imgIterateBtn').onclick = iterateImageAnalysis;
+}
+
+async function checkImageSupport() {
+  try {
+    const res = await fetch(`${serverUrl}/health`, { signal: AbortSignal.timeout(5000) });
+    if (res.ok) {
+      const d = await res.json();
+      imgAnalysisAvailable = !!d.imageAnalysis;
+      if (!imgAnalysisAvailable) {
+        $('imgNoKey').style.display = 'block';
+        $('imgContent').style.display = 'none';
+      }
+    }
+  } catch {}
+}
+
+function handleImageFile(file) {
+  if (!file || !file.type.startsWith('image/')) { showToast('⚠️ 请选择图片文件'); return; }
+  if (file.size > 20 * 1024 * 1024) { showToast('⚠️ 图片超过 20MB'); return; }
+  imgFile = file;
+  const url = URL.createObjectURL(file);
+  $('imgPreview').src = url;
+  $('imgPreviewWrap').classList.add('show');
+  $('imgUploadZone').style.display = 'none';
+  $('imgParams').style.display = 'grid';
+  $('imgAnalyzeBtn').style.display = 'block';
+  $('imgAnalyzeBtn').disabled = false;
+  // Reset result
+  $('imgResult').classList.remove('show');
+  $('imgIterateSection').classList.remove('show');
+  imgResult = null;
+}
+
+async function startImageAnalysis() {
+  if (!imgFile) return;
+
+  $('imgAnalyzeBtn').style.display = 'none';
+  $('imgLoading').classList.add('show');
+  $('imgResult').classList.remove('show');
+
+  try {
+    const formData = new FormData();
+    formData.append('image', imgFile);
+    formData.append('aspectRatio', $('imgAspect').value);
+    formData.append('quality', $('imgQuality').value);
+
+    const res = await fetch(`${serverUrl}/api/analyze-image`, {
+      method: 'POST',
+      body: formData,
+      signal: AbortSignal.timeout(60000)
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+
+    const result = await res.json();
+    imgResult = result.data;
+    showImageResult(imgResult);
+
+  } catch (err) {
+    showToast('❌ 图片分析失败: ' + err.message);
+    $('imgLoading').classList.remove('show');
+    $('imgAnalyzeBtn').style.display = 'block';
+  }
+}
+
+function showImageResult(data) {
+  $('imgLoading').classList.remove('show');
+  $('imgAnalyzeBtn').style.display = 'block';
+  $('imgResult').classList.add('show');
+
+  $('imgPromptText').textContent = data.prompt || '-';
+
+  // Breakdown
+  const bd = data.breakdown || {};
+  const keys = ['主体', '场景', '动作', '风格', '色调', '光影', '细节'];
+  const validKeys = keys.filter(k => bd[k]);
+  if (validKeys.length > 0) {
+    $('imgBreakdown').style.display = 'grid';
+    $('imgBreakdown').innerHTML = validKeys.map(k => `
+      <div class="img-breakdown-item">
+        <div class="img-bd-key">${k}</div>
+        <div class="img-bd-val">${esc(bd[k])}</div>
+      </div>
+    `).join('');
+  } else {
+    $('imgBreakdown').style.display = 'none';
+  }
+
+  // Reset iterate
+  $('imgIterateInput').value = '';
+  $('imgIterateSection').classList.remove('show');
+}
+
+async function iterateImageAnalysis() {
+  const modifyInstruction = $('imgIterateInput').value.trim();
+  if (!modifyInstruction) { showToast('⚠️ 请输入修改指令'); return; }
+  if (!imgResult) { showToast('⚠️ 无分析结果'); return; }
+
+  $('imgIterateBtn').disabled = true;
+  $('imgIterateBtn').textContent = '🔄 正在重新生成...';
+
+  try {
+    const res = await fetch(`${serverUrl}/api/analyze-image-iterate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        previousPrompt: imgResult.prompt,
+        modifyInstruction: modifyInstruction,
+        breakdown: imgResult.breakdown,
+        aspectRatio: $('imgAspect').value,
+        quality: $('imgQuality').value
+      }),
+      signal: AbortSignal.timeout(60000)
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+
+    const result = await res.json();
+    imgResult = result.data;
+    showImageResult(imgResult);
+    showToast('✅ 提示词已更新');
+
+  } catch (err) {
+    showToast('❌ 迭代失败: ' + err.message);
+  } finally {
+    $('imgIterateBtn').disabled = false;
+    $('imgIterateBtn').textContent = '🔄 重新生成';
+  }
 }
 
 init();
