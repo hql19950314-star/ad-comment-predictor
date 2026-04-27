@@ -1,5 +1,5 @@
 /**
- * 繁星-视频分析 - 后端服务器 v5.3 (Gemini 版)
+ * 繁星-视频分析 - 后端服务器 v5.4 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -25,8 +25,9 @@ if (!GEMINI_API_KEY) {
   process.exit(1);
 }
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
-const GEMINI_IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || 'gemini-2.0-flash-exp';
-const GEMINI_IMAGE_GEN_MODEL = process.env.GEMINI_IMAGE_GEN_MODEL || 'imagen-3.0-generate-002';
+const GEMINI_IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || 'gemini-2.5-flash-lite';
+// 图片生成模型：使用 Imagen 系列（通过 Gemini API 调用）
+const GEMINI_IMAGE_GEN_MODEL = process.env.GEMINI_IMAGE_GEN_MODEL || 'imagen-3.0-generate-001';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -86,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.3.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.4.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
@@ -190,7 +191,7 @@ async function generateImageWithImagen(prompt, aspectRatio, quality) {
   const apiKey = process.env.GEMINI_API_KEY; // 复用 Gemini API Key
 
   if (!projectId) {
-    // 回退：使用 Gemini 原生生图（gemini-2.0-flash-exp 支持）
+    // 回退：使用 Gemini Imagen 模型生图
     console.log('  → 无 Vertex AI 项目，使用 Gemini 原生生图...');
     return await generateImageWithGeminiNative(prompt, aspectRatio, quality);
   }
@@ -254,27 +255,25 @@ async function getAccessToken() {
 }
 
 async function generateImageWithGeminiNative(prompt, aspectRatio, quality) {
-  // Gemini 原生生图（2.0-flash-exp 支持）
-  const aspectMap = { '1:1': '1:1', '16:9': '16:9', '9:16': '9:16', '4:3': '4:3' };
-  const ratio = aspectMap[aspectRatio] || '1:1';
+  // 使用 Gemini Imagen 模型（通过 generativelanguage API 直接调用）
+  const aspectMap = { '1:1': '1:1', '16:9': '16:9', '9:16': '9:16', '4:3': '4:3', '3:4': '3:4' };
+  const ratio = aspectMap[aspectRatio] || aspectRatio || '1:1';
 
-  const genConfig = {
-    responseModalities: ['Text', 'Image'],
-    temperature: 0.8,
-    maxOutputTokens: 8192
-  };
+  // 清晰度映射到尺寸提示
+  const qualitySizeMap = { '1k': '1024px', '2k': '2048px', '4k': '4096px' };
+  const sizeHint = qualitySizeMap[(quality || '').toLowerCase()] || '2048px';
 
-  // 注入分辨率提示
-  const ratioPrompt = ratio === '9:16' ? '竖图，9:16比例，' :
-                      ratio === '16:9' ? '横图，16:9比例，' :
-                      ratio === '4:3' ? '横图，4:3比例，' : '';
-  const fullPrompt = `请生成一张图片：${ratioPrompt}${prompt}`;
+  const fullPrompt = `${prompt}。输出分辨率约${sizeHint}，图片比例${ratio}`;
 
   const response = await geminiRequest(
-    `/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+    `/v1beta/models/${GEMINI_IMAGE_GEN_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
     {
       contents: [{ parts: [{ text: fullPrompt }] }],
-      generationConfig: genConfig
+      generationConfig: {
+        responseModalities: ['IMAGE', 'Text'],
+        temperature: 0.8,
+        maxOutputTokens: 8192
+      }
     }
   );
 
@@ -284,7 +283,11 @@ async function generateImageWithGeminiNative(prompt, aspectRatio, quality) {
       return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
     }
   }
-  throw new Error('Gemini 生图返回中未找到图片数据');
+  const textParts = parts.filter(p => p.text);
+  if (textParts.length > 0) {
+    throw new Error(`模型返回文本而非图片。当前模型 ${GEMINI_IMAGE_GEN_MODEL} 可能不支持此API，请在 Railway 设置 GEMINI_IMAGE_GEN_MODEL 为 imagen-3.0-fast-generate-001 或 imagen-3.0-generate-002`);
+  }
+  throw new Error('Gemini 生图返回为空');
 }
 
 // ── Image Analysis Endpoint (Gemini Vision) ────────────────────────────────
@@ -772,11 +775,11 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析+图片分析  v5.3              ║');
+  console.log('║   🌟 繁星-视频分析+图片分析  v5.4              ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log('║   地址: http://localhost:3000                  ║');
   console.log('║   视频: gemini-2.5-pro                         ║');
-  console.log('║   图片: gemini-2.0-flash-exp                  ║');
+  console.log('║   图片: gemini-2.5-flash-lite                ║');
   console.log('║   生图: Gemini Native / Imagen 3               ║');
   console.log('╚════════════════════════════════════════════╝\n');
 });

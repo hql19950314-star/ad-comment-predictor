@@ -1103,6 +1103,33 @@
           <div class="img-prompt-label">✏️ 复刻提示词（可直接编辑）</div>
           <textarea class="img-prompt-textarea" id="imgPromptText" placeholder="分析完成后提示词将显示在这里，你可以直接修改..."></textarea>
           <div class="img-breakdown" id="imgBreakdown"></div>
+          
+          <!-- Generate Params (shown after analysis) -->
+          <div class="img-gen-params" id="imgGenParams" style="display:none;margin-bottom:14px;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;">
+            <div style="font-size:12px;color:var(--text2);margin-bottom:10px;font-weight:600;">🎨 生图参数</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div>
+                <label class="img-param-label" style="font-size:11px;">📐 图片比例</label>
+                <select class="img-param-select" id="imgGenAspect" style="font-size:13px;padding:6px 8px;">
+                  <option value="1:1">1:1（正方形）</option>
+                  <option value="16:9">16:9（横屏）</option>
+                  <option value="9:16">9:16（竖屏）</option>
+                  <option value="4:3">4:3（标准）</option>
+                  <option value="3:4">3:4（竖版标准）</option>
+                  <option value="custom">自定义比例</option>
+                </select>
+                <input type="text" id="imgCustomAspect" placeholder="如 3:2, 21:9, 2:3..." style="display:none;width:100%;margin-top:6px;padding:6px 8px;font-size:12px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);box-sizing:border-box;" />
+              </div>
+              <div>
+                <label class="img-param-label" style="font-size:11px;">🖼️ 清晰度</label>
+                <select class="img-param-select" id="imgGenQuality" style="font-size:13px;padding:6px 8px;">
+                  <option value="2k">2K（推荐）</option>
+                  <option value="1k">1K（快速）</option>
+                  <option value="4k">4K（精细）</option>
+                </select>
+              </div>
+            </div>
+          </div>
           <div class="img-actions" id="imgActions">
             <button class="btn-primary" id="imgGenerateBtn">🎨 生成图片</button>
             <button class="btn-copy" id="imgCopyBtn">📋 复制提示词</button>
@@ -1779,7 +1806,7 @@ function handleImageFile(file) {
   $('imgPreview').src = url;
   $('imgPreviewWrap').classList.add('show');
   $('imgUploadZone').style.display = 'none';
-  $('imgParams').style.display = 'grid';
+  // Params now shown after analysis, not on upload
   $('imgAnalyzeBtn').style.display = 'block';
   $('imgAnalyzeBtn').disabled = false;
   // Reset result
@@ -1892,6 +1919,15 @@ async function iterateImageAnalysis() {
     $('imgIterateBtn').disabled = false;
     $('imgIterateBtn').textContent = '🔄 重新生成';
   }
+}
+
+function getImgAspectRatio() {
+  const sel = $('imgGenAspect');
+  if (!sel) return '1:1';
+  if (sel.value === 'custom') {
+    return $('imgCustomAspect').value.trim() || '1:1';
+  }
+  return sel.value || '1:1';
 }
 
 let generatedImageData = null;
