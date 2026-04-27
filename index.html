@@ -880,27 +880,38 @@
     display: none; margin-top: 20px;
   }
   .img-result.show { display: block; }
-  .img-prompt-area {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    width: 100%;
-    min-height: 120px;
-    max-height: 300px;
-    font-size: 14px;
-    line-height: 1.8;
-    color: var(--text);
-    resize: vertical;
-    outline: none;
-    font-family: inherit;
-    margin-bottom: 14px;
+  .img-prompt-label {
+    font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 500;
   }
-  .img-prompt-area:focus { border-color: var(--blue); }
-  .img-breakdown {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-    margin-bottom: 14px;
+  .img-prompt-textarea {
+    width: 100%; min-height: 120px; max-height: 280px; resize: vertical;
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text);
+    font-family: inherit; font-size: 14px; line-height: 1.6;
+    padding: 12px; box-sizing: border-box; margin-bottom: 14px;
   }
+  .img-prompt-textarea:focus { outline: none; border-color: var(--accent); }
+  .img-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    color: #fff; border: none; border-radius: var(--radius-sm);
+    padding: 10px 20px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .img-generated-section {
+    display: none; margin-top: 24px; padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .img-generated-section.show { display: block; }
+  .img-generated-label {
+    font-size: 13px; color: var(--text2); margin-bottom: 12px; font-weight: 500;
+  }
+  .img-generated-preview { margin-bottom: 14px; }
+  .img-generated-preview img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+  .img-generated-actions { display: flex; gap: 8px; }
+  .img-breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
   .img-breakdown-item {
     background: var(--card2);
     border: 1px solid var(--border);
@@ -1089,11 +1100,12 @@
 
         <!-- Result -->
         <div class="img-result" id="imgResult">
-          <div class="prompt-text" id="imgPromptText" style="max-height:240px">-</div>
+          <div class="img-prompt-label">✏️ 复刻提示词（可直接编辑）</div>
+          <textarea class="img-prompt-textarea" id="imgPromptText" placeholder="分析完成后提示词将显示在这里，你可以直接修改..."></textarea>
           <div class="img-breakdown" id="imgBreakdown"></div>
-          <div class="img-actions">
+          <div class="img-actions" id="imgActions">
+            <button class="btn-primary" id="imgGenerateBtn">🎨 生成图片</button>
             <button class="btn-copy" id="imgCopyBtn">📋 复制提示词</button>
-            <button class="btn-export" id="imgExportBtn">💾 保存到本地</button>
             <button class="btn-ghost" id="imgIterateToggle" style="font-size:13px">🔄 迭代优化</button>
           </div>
           <div class="img-iterate-section" id="imgIterateSection">
@@ -1101,6 +1113,15 @@
             <button class="img-analyze-btn" id="imgIterateBtn" style="margin-top:0;background:linear-gradient(135deg,var(--purple),#7c3aed)">
               🔄 重新生成
             </button>
+          </div>
+          <!-- Generated Image Display -->
+          <div class="img-generated-section" id="imgGeneratedSection">
+            <div class="img-generated-label">🖼️ AI 生成结果</div>
+            <div class="img-generated-preview" id="imgGeneratedPreview"></div>
+            <div class="img-generated-actions" id="imgGenActions" style="display:none">
+              <button class="btn-primary" id="imgDownloadBtn">⬇️ 下载图片</button>
+              <button class="btn-ghost" id="imgRegenerateBtn">🔄 重新生成</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1725,9 +1746,11 @@ function initImageAnalysis() {
   // Analyze
   $('imgAnalyzeBtn').onclick = startImageAnalysis;
 
-  // Copy & Export
-  $('imgCopyBtn').onclick = () => copyText($('imgPromptText').textContent);
-  $('imgExportBtn').onclick = () => exportText($('imgPromptText').textContent, 'image-prompt.txt');
+  // Copy & Generate
+  $('imgCopyBtn').onclick = () => copyText($('imgPromptText').value);
+  $('imgGenerateBtn').onclick = generateImage;
+  $('imgRegenerateBtn').onclick = generateImage;
+  $('imgDownloadBtn').onclick = downloadGeneratedImage;
 
   // Iterate
   $('imgIterateToggle').onclick = () => $('imgIterateSection').classList.toggle('show');
@@ -1804,8 +1827,11 @@ function showImageResult(data) {
   $('imgLoading').classList.remove('show');
   $('imgAnalyzeBtn').style.display = 'block';
   $('imgResult').classList.add('show');
+  $('imgGeneratedSection').classList.remove('show');
+  $('imgGenActions').style.display = 'none';
 
-  $('imgPromptText').textContent = data.prompt || '-';
+  // Populate editable textarea
+  $('imgPromptText').value = data.prompt || '';
 
   // Breakdown
   const bd = data.breakdown || {};
@@ -1823,7 +1849,7 @@ function showImageResult(data) {
     $('imgBreakdown').style.display = 'none';
   }
 
-  // Reset iterate
+  // Reset iterate & generation
   $('imgIterateInput').value = '';
   $('imgIterateSection').classList.remove('show');
 }
@@ -1866,6 +1892,61 @@ async function iterateImageAnalysis() {
     $('imgIterateBtn').disabled = false;
     $('imgIterateBtn').textContent = '🔄 重新生成';
   }
+}
+
+let generatedImageData = null;
+
+async function generateImage() {
+  const prompt = $('imgPromptText').value.trim();
+  if (!prompt) { showToast('⚠️ 提示词为空，请先分析图片'); return; }
+
+  const btn = $('imgGenerateBtn');
+  btn.disabled = true;
+  btn.textContent = '🎨 正在生成...';
+  $('imgRegenerateBtn').disabled = true;
+
+  try {
+    const res = await fetch(`${serverUrl}/api/generate-image`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: prompt,
+        aspectRatio: $('imgAspect').value,
+        quality: $('imgQuality').value
+      }),
+      signal: AbortSignal.timeout(120000)
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+
+    const result = await res.json();
+    generatedImageData = result.image;
+
+    // Show generated image
+    $('imgGeneratedSection').classList.add('show');
+    $('imgGeneratedPreview').innerHTML = `<img src="${generatedImageData}" style="max-width:100%;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.4)" />`;
+    $('imgGenActions').style.display = 'flex';
+    showToast('✅ 图片生成完成');
+    window.generatedImageSrc = generatedImageData;
+
+  } catch (err) {
+    showToast('❌ 图片生成失败: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🎨 生成图片';
+    $('imgRegenerateBtn').disabled = false;
+  }
+}
+
+function downloadGeneratedImage() {
+  if (!generatedImageData) { showToast('⚠️ 暂无生成图片'); return; }
+  const a = document.createElement('a');
+  a.href = generatedImageData;
+  a.download = `gemini-generated-${Date.now()}.png`;
+  a.click();
 }
 
 init();
