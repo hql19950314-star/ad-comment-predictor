@@ -1,4 +1,1 @@
-# FORCE RAILWAY REDEPLOY
-# This file forces Railway to rebuild from GitHub
-# Created: 2026-04-24 16:35:33
-VERSION=3.0.0-star
+node
