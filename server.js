@@ -27,7 +27,7 @@ if (!GEMINI_API_KEY) {
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
 const GEMINI_IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || 'gemini-2.5-flash-lite';
 // 图片生成模型：使用 Gemini 原生图片生成模型
-const GEMINI_IMAGE_GEN_MODEL = process.env.GEMINI_IMAGE_GEN_MODEL || 'gemini-2.0-flash-exp-image-generation';
+const GEMINI_IMAGE_GEN_MODEL = process.env.GEMINI_IMAGE_GEN_MODEL || 'gemini-2.0-flash-exp';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -87,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.5.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.6.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
