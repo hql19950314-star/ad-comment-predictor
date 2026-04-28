@@ -1,5 +1,5 @@
 /**
- * 繁星-视频分析 - 后端服务器 v5.10 (Gemini 版)
+ * 繁星-视频分析 - 后端服务器 v5.11 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -27,7 +27,7 @@ if (!GEMINI_API_KEY) {
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
 const GEMINI_IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || 'gemini-2.5-flash-lite';
 // 图片生成模型：使用 Gemini 原生图片生成模型
-const GEMINI_IMAGE_GEN_MODEL = process.env.GEMINI_IMAGE_GEN_MODEL || 'gemini-2.5-flash-image-preview';
+const GEMINI_IMAGE_GEN_MODEL = process.env.GEMINI_IMAGE_GEN_MODEL || 'gemini-2.0-flash-exp';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -87,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.10.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.11.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
@@ -785,11 +785,11 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析+图片分析  v5.10            ║');
+  console.log('║   🌟 繁星-视频分析+图片分析  v5.11            ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log('║   地址: http://localhost:3000                  ║');
   console.log('║   视频: gemini-2.5-pro                         ║');
   console.log('║   图片: gemini-2.5-flash-lite                ║');
-  console.log('║   生图: gemini-2.5-flash-image-preview-image-gen          ║');
+  console.log('║   生图: gemini-2.0-flash-exp (v1beta)         ║');
   console.log('╚════════════════════════════════════════════╝\n');
 });
