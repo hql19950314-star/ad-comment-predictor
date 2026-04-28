@@ -1,5 +1,5 @@
 /**
- * 繁星-视频分析 - 后端服务器 v5.5 (Gemini 版)
+ * 繁星-视频分析 - 后端服务器 v5.7 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -87,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.6.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.7.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
@@ -256,6 +256,8 @@ async function getAccessToken() {
 
 async function generateImageWithGeminiNative(prompt, aspectRatio, quality) {
   // 使用 Gemini 原生图片生成模型（通过 generativelanguage API）
+  console.log(`  [Gemini 原生生图] 模型: ${GEMINI_IMAGE_GEN_MODEL}`);
+
   const aspectMap = { '1:1': '1:1', '16:9': '16:9', '9:16': '9:16', '4:3': '4:3', '3:4': '3:4' };
   const ratio = aspectMap[aspectRatio] || aspectRatio || '1:1';
 
@@ -265,29 +267,35 @@ async function generateImageWithGeminiNative(prompt, aspectRatio, quality) {
 
   const fullPrompt = `Generate an image: ${prompt}. Output resolution approximately ${sizeHint}, aspect ratio ${ratio}.`;
 
-  const response = await geminiRequest(
-    `/v1beta/models/${GEMINI_IMAGE_GEN_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-    {
+  const apiPath = `/v1beta/models/${GEMINI_IMAGE_GEN_MODEL}:generateContent`;
+  console.log(`  [Gemini 原生生图] 请求路径: ${apiPath}`);
+
+  try {
+    const response = await geminiRequest(apiPath, {
       contents: [{ parts: [{ text: fullPrompt }] }],
       generationConfig: {
         responseModalities: ['IMAGE', 'Text'],
         temperature: 0.8,
         maxOutputTokens: 8192
       }
-    }
-  );
+    });
 
-  const parts = response.candidates?.[0]?.content?.parts || [];
-  for (const part of parts) {
-    if (part.inlineData) {
-      return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+    const parts = response.candidates?.[0]?.content?.parts || [];
+    for (const part of parts) {
+      if (part.inlineData) {
+        console.log(`  [Gemini 原生生图] 成功返回图片，mimeType: ${part.inlineData.mimeType}`);
+        return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+      }
     }
+    const textParts = parts.filter(p => p.text);
+    if (textParts.length > 0) {
+      throw new Error(`模型返回文本而非图片。错误信息: ${textParts[0].text.substring(0, 200)}`);
+    }
+    throw new Error('Gemini 生图返回为空，请检查模型是否支持图片生成');
+  } catch (err) {
+    console.error(`  [Gemini 原生生图] 失败: ${err.message}`);
+    throw err;
   }
-  const textParts = parts.filter(p => p.text);
- if (textParts.length > 0) {
-    throw new Error(`模型返回文本而非图片。当前模型 ${GEMINI_IMAGE_GEN_MODEL} 可能不支持图片生成。错误信息: ${textParts[0].text.substring(0, 200)}`);
-  }
-  throw new Error('Gemini 生图返回为空，请检查模型是否支持图片生成');
 }
 
 // ── Image Analysis Endpoint (Gemini Vision) ────────────────────────────────
@@ -775,7 +783,7 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析+图片分析  v5.5              ║');
+  console.log('║   🌟 繁星-视频分析+图片分析  v5.7              ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log('║   地址: http://localhost:3000                  ║');
   console.log('║   视频: gemini-2.5-pro                         ║');
