@@ -1,5 +1,5 @@
 /**
- * 繁星-视频分析 - 后端服务器 v5.8 (Gemini 版)
+ * 繁星-视频分析 - 后端服务器 v5.9 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -87,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.8.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.9.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
@@ -267,8 +267,8 @@ async function generateImageWithGeminiNative(prompt, aspectRatio, quality) {
 
   const fullPrompt = `Generate an image: ${prompt}. Output resolution approximately ${sizeHint}, aspect ratio ${ratio}.`;
 
-  const apiPath = `/v1beta/models/${GEMINI_IMAGE_GEN_MODEL}:generateContent`;
-  console.log(`  [Gemini 原生生图] 请求路径: ${apiPath}`);
+  const apiPath = `/v1beta/models/${GEMINI_IMAGE_GEN_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+  console.log(`  [Gemini 原生生图] 请求路径: ${apiPath.replace(GEMINI_API_KEY, '***')}`);
 
   try {
     const response = await geminiRequest(apiPath, {
@@ -454,9 +454,11 @@ ${modifyInstruction}
 function geminiRequest(path, body) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify(body);
+    // 自动追加 API Key（如果路径中尚未包含）
+    const finalPath = path.includes('?key=') ? path : `${path}${path.includes('?') ? '&' : '?'}key=${GEMINI_API_KEY}`;
     const options = {
       hostname: 'generativelanguage.googleapis.com',
-      path: path,
+      path: finalPath,
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }
     };
@@ -783,7 +785,7 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析+图片分析  v5.8              ║');
+  console.log('║   🌟 繁星-视频分析+图片分析  v5.9              ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log('║   地址: http://localhost:3000                  ║');
   console.log('║   视频: gemini-2.5-pro                         ║');
