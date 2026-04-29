@@ -1,5 +1,5 @@
-/**
- * 繁星-视频分析 - 后端服务器 v5.16.0 (Gemini 版)
+﻿/**
+ * 繁星-视频分析 - 后端服务器 v5.16.1 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -87,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.16.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.16.1', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
@@ -502,8 +502,9 @@ async function stage1_visualAnalysis(videoBase64, videoMimeType) {
   const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error('Stage 1: Gemini 返回为空');
 
+  const cleaned = cleanJsonResponse(text);
   try {
-    const result = JSON.parse(cleanJsonResponse(text));
+    const result = JSON.parse(cleaned);
     console.log(`  → Stage 1 完成: ${result.product} / ${result.category} / 分镜${result.storyboard?.length || 0}个 / 角色${result.characters?.length || 0}个`);
     return result;
   } catch (e) {
@@ -702,7 +703,7 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析+图片分析  v5.16.0          ║');
+  console.log('║   🌟 繁星-视频分析+图片分析  v5.16.1          ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log('║   地址: http://localhost:3000                  ║');
   console.log('║   视频: gemini-2.5-pro                         ║');
