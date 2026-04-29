@@ -1,5 +1,5 @@
 /**
- * 繁星-视频分析 - 后端服务器 v5.14.0 (Gemini 版)
+ * 繁星-视频分析 - 后端服务器 v5.15.0 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -87,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.14.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.15.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
@@ -516,7 +516,7 @@ async function stage1_visualAnalysis(videoBase64, videoMimeType) {
 async function stage2_generatePromptAndRisk(visualData, userTemplate) {
   const defaultTemplate = {
     name: 'Seedance 2.0 标准模板',
-    template: `@图片1作为主体角色，@图片2（可选）作为次要角色或背景参考，\n@视频1作为镜头语言与运镜参考，\n@音频1作为背景音乐或配音参考，\n在[场景描述]中进行[主要动作/剧情]，\n[BGM风格]背景音乐，[色调描述]色调，[视觉风格]视觉风格，\n[额外描述：如镜头运动/表情特写/光影效果/氛围等]`
+    template: `0-x秒：[场景与画面描述]，[角色动作/剧情]，[镜头运动与景别]，[色调与光影氛围]\nx-y秒：[场景与画面描述]，[角色动作/剧情]，[镜头运动与景别]，[色调与光影氛围]\ny-z秒：[场景与画面描述]，[角色动作/剧情]，[镜头运动与景别]，[色调与光影氛围]`
   };
 
   const template = userTemplate || defaultTemplate;
