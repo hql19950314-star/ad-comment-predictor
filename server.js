@@ -1,5 +1,5 @@
 /**
- * 繁星-视频分析 - 后端服务器 v5.15.0 (Gemini 版)
+ * 繁星-视频分析 - 后端服务器 v5.16.0 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -87,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.15.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.16.0', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
@@ -507,7 +507,7 @@ async function stage1_visualAnalysis(videoBase64, videoMimeType) {
     console.log(`  → Stage 1 完成: ${result.product} / ${result.category} / 分镜${result.storyboard?.length || 0}个 / 角色${result.characters?.length || 0}个`);
     return result;
   } catch (e) {
-    console.error('  → Stage 1 解析失败:', text.substring(0, 300));
+    console.error('  → Stage 1 JSON parse failed, cleaned (first 300 chars): ' + cleaned.substring(0, 300));
     throw new Error('Stage 1: 无法解析视觉分析结果');
   }
 }
@@ -702,7 +702,7 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析+图片分析  v5.12.1          ║');
+  console.log('║   🌟 繁星-视频分析+图片分析  v5.16.0          ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log('║   地址: http://localhost:3000                  ║');
   console.log('║   视频: gemini-2.5-pro                         ║');
