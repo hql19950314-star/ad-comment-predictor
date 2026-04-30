@@ -1,5 +1,5 @@
 ﻿/**
- * 繁星-视频分析 - 后端服务器 v5.16.2 (Gemini 版)
+ * 繁星-视频分析 - 后端服务器 v5.16.3 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -87,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.16.2', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.16.3', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
@@ -368,6 +368,53 @@ ${modifyInstruction}
 //  Gemini API 调用
 // ═══════════════════════════════════════════════════════════════
 
+// ── Gemini Request with Retry + Fallback ─────────────────────────────────────
+async function geminiCallWithRetry(model, buildRequest) {
+  const MAX_RETRIES = 2;
+  const RETRY_DELAYS = [3000, 6000];
+  const FALLBACK_MODEL = 'gemini-2.5-flash-lite';
+
+  const tryModel = async (m) => {
+    return await geminiRequest(
+      `/v1beta/models/${m}:generateContent?key=${GEMINI_API_KEY}`,
+      buildRequest()
+    );
+  };
+
+  // 尝试主模型，最多重试 2 次
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      if (attempt > 0) {
+        console.log(`  ⏳ 重试 ${attempt}/${MAX_RETRIES} (${RETRY_DELAYS[attempt - 1] / 1000}s)...`);
+        await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt - 1]));
+      }
+      return await tryModel(model);
+    } catch (e) {
+      const retryable = /high demand|UNAVAILABLE|overloaded|503|429|RESOURCE_EXHAUSTED|INTERNAL/i.test(e.message);
+      if (!retryable) throw e;
+      if (attempt < MAX_RETRIES) {
+        console.log(`  ⚠️ ${model} 繁忙: ${e.message.substring(0, 80)}`);
+        continue;
+      }
+    }
+  }
+
+  // 降级到 flash-lite
+  if (model !== FALLBACK_MODEL) {
+    console.log(`  🔄 ${model} 不可用，降级到 ${FALLBACK_MODEL}...`);
+    try {
+      const result = await tryModel(FALLBACK_MODEL);
+      console.log('  ✅ 降级成功');
+      return result;
+    } catch (e2) {
+      throw new Error(`Gemini 繁忙，降级也失败: ${e2.message.substring(0, 100)}`);
+    }
+  }
+
+  throw new Error(`Gemini ${model} 繁忙，请稍后重试`);
+}
+
+// ── Raw Gemini HTTP Request ────────────────────────────────────────────────
 function geminiRequest(path, body) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify(body);
@@ -504,13 +551,10 @@ async function stage1_visualAnalysis(videoBase64, videoMimeType) {
 - dialogue 字段必须严格区分四类：角色口播/旁白画外音/路人议论/字幕文案，不要混淆
 - 无法确认的信息要保守描述，不要乱写`;
 
-  const response = await geminiRequest(
-    `/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: videoMimeType, data: videoBase64 } }] }],
-      generationConfig: { maxOutputTokens: 4000, temperature: 0.3 }
-    }
-  );
+  const response = await geminiCallWithRetry(GEMINI_MODEL, () => ({
+    contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: videoMimeType, data: videoBase64 } }] }],
+    generationConfig: { maxOutputTokens: 4000, temperature: 0.3 }
+  }));
 
   const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error('Stage 1: Gemini 返回为空');
@@ -621,13 +665,10 @@ ${template.template}
 
   console.log('  → Stage 2: 生成时间轴提示词...');
 
-  const response = await geminiRequest(
-    `/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      contents: [{ parts: [{ text: stage2Prompt }] }],
-      generationConfig: { maxOutputTokens: 6000, temperature: 0.7 }
-    }
-  );
+  const response = await geminiCallWithRetry(GEMINI_MODEL, () => ({
+    contents: [{ parts: [{ text: stage2Prompt }] }],
+    generationConfig: { maxOutputTokens: 6000, temperature: 0.7 }
+  }));
 
   const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error('Stage 2: 生成返回为空');
@@ -687,13 +728,10 @@ ${timelineStr}
 ${originalPrompt}
 ${optimizeStr}${templateStr}${styleBlock}`;
 
-  const response = await geminiRequest(
-    `/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      contents: [{ parts: [{ text: stage3Prompt }] }],
-      generationConfig: { maxOutputTokens: 6000, temperature: 0.8 }
-    }
-  );
+  const response = await geminiCallWithRetry(GEMINI_MODEL, () => ({
+    contents: [{ parts: [{ text: stage3Prompt }] }],
+    generationConfig: { maxOutputTokens: 6000, temperature: 0.8 }
+  }));
 
   const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error('Stage 3: 生成返回为空');
@@ -716,7 +754,7 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析+图片分析  v5.16.2          ║');
+  console.log('║   🌟 繁星-视频分析+图片分析  v5.16.3          ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log('║   地址: http://localhost:3000                  ║');
   console.log('║   视频: gemini-2.5-pro                         ║');
