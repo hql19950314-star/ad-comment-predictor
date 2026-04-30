@@ -1468,6 +1468,16 @@ function saveTemplates() {
 
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+function fmtTime(tr) {
+  if (!tr) return tr;
+  return tr.replace(/(\d+(?:\.\d+)?)\s*秒?/g, (_, secs) => {
+    const t = parseFloat(secs);
+    const m = Math.floor(t / 60);
+    const s = Math.round(t % 60);
+    return `${m}:${String(s).padStart(2, '0')}`;
+  });
+}
+
 function copyText(text) {
   navigator.clipboard.writeText(text).then(() => showToast('✅ 已复制到剪贴板'));
 }
@@ -1624,7 +1634,7 @@ function showResults(data) {
     const prompt = timelinePrompts.find(p => p.timeRange === t.timeRange);
     return `
       <div class="timeline-node">
-        <div class="timeline-time">${esc(t.timeRange)}</div>
+        <div class="timeline-time">${esc(fmtTime(t.timeRange))}</div>
         <div class="timeline-content">
           <div class="tc-row"><span class="tc-label">镜头</span><span class="tc-val">${esc(t.shotType)}</span></div>
           <div class="tc-row"><span class="tc-label">运镜</span><span class="tc-val">${esc(t.cameraMovement)}</span></div>
@@ -1715,7 +1725,7 @@ function showLaunchResult(data) {
   const tp = data.timelinePrompts || [];
   $('lrTimeline').innerHTML = tp.length > 0 ? tp.map(p => `
     <div class="lr-timeline-node">
-      <div class="lr-tn-time">${esc(p.timeRange)}</div>
+      <div class="lr-tn-time">${esc(fmtTime(p.timeRange))}</div>
       <div class="lr-tn-prompt">${esc(p.prompt)}</div>
     </div>
   `).join('') : '';
