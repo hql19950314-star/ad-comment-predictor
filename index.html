@@ -1335,9 +1335,28 @@ let templates = JSON.parse(localStorage.getItem('star_templates') || 'null') || 
   {
     name: '电影感模板',
     template: `镜头：{shotType}，\n场景：{scene}，\n主体角色：@图片1，\n运镜参考：@视频1，\n{BGM}配乐：{audioElements}，\n{artStyle}画风，{atmosphere}氛围，\n核心卖点：{sellingPoints}，\n{adTechnique}，\n光影：{lighting}，构图：{composition}`
+  },
+  {
+    name: '纯视觉叙述型',
+    template: `0-x秒：[情境建立]，[主角在空间中行动]，[固定镜头或缓推，环境音为主]，[自然光或单一主光源]\nx-y秒：[核心事件]，[主角完成关键动作]，[中景跟拍，节奏与动作同步]，[光影随动作变化]\ny-z秒：[情绪收束]，[主角反应或环境空镜]，[静止或极缓摇镜，呼吸感]，[色调情绪收拢]`
   }
 ];
 let activeTemplate = localStorage.getItem('star_active_tpl') || templates[0].name;
+
+// 自动合并新预设模板到已有 localStorage（不覆盖用户自定义）
+(function mergePresets() {
+  const presetNames = templates.map(t => t.name);
+  const stored = JSON.parse(localStorage.getItem('star_templates') || 'null');
+  if (stored) {
+    const storedNames = stored.map(t => t.name);
+    const newPresets = templates.filter(t => !storedNames.includes(t.name));
+    if (newPresets.length > 0) {
+      templates = [...stored, ...newPresets];
+    } else {
+      templates = stored;
+    }
+  }
+})();
 
 // ── Init ───────────────────────────────────────────────────────────────────
 function init() {
