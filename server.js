@@ -1,5 +1,5 @@
 ﻿/**
- * 繁星-视频分析 - 后端服务器 v5.16.1 (Gemini 版)
+ * 繁星-视频分析 - 后端服务器 v5.16.2 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -87,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.16.1', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.16.2', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
@@ -403,10 +403,23 @@ function geminiRequest(path, body) {
 
 function cleanJsonResponse(text) {
   if (typeof text !== 'string') return text;
+  // 1. Try code block
   const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (match) return match[1].trim();
-  const objMatch = text.match(/(\{[\s\S]*\})/);
-  if (objMatch) return objMatch[1].trim();
+  // 2. Balanced bracket extraction (fixes greedy regex that breaks on nested JSON)
+  const start = text.indexOf('{');
+  if (start === -1) return text.trim();
+  let depth = 0, inString = false, escaped = false;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (escaped) { escaped = false; continue; }
+    if (ch === '\\' && inString) { escaped = true; continue; }
+    if (ch === '"') { inString = !inString; continue; }
+    if (inString) continue;
+    if (ch === '{') depth++;
+    else if (ch === '}') { depth--; if (depth === 0) return text.substring(start, i + 1).trim(); }
+  }
+  // 3. Fallback: return as-is
   return text.trim();
 }
 
@@ -703,7 +716,7 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析+图片分析  v5.16.1          ║');
+  console.log('║   🌟 繁星-视频分析+图片分析  v5.16.2          ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log('║   地址: http://localhost:3000                  ║');
   console.log('║   视频: gemini-2.5-pro                         ║');
