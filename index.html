@@ -302,6 +302,20 @@
     letter-spacing: 0.5px;
   }
   .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,184,75,0.5); }
+  .cancel-btn {
+    width: 100%; margin-top: 12px;
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+  }
+  .cancel-btn:hover { border-color: var(--red); color: var(--red); }
 
   /* ── Analysis Loading ──────────────────────────────────────────── */
   .analysis { display: none; margin-bottom: 36px; }
@@ -1169,6 +1183,7 @@
         <div class="meta-row"><span class="meta-key">时长</span><span class="meta-val" id="mDur">-</span></div>
         <div class="meta-row"><span class="meta-key">分辨率</span><span class="meta-val" id="mRes">-</span></div>
         <button class="start-btn" id="startBtn">🚀 开始 AI 分析</button>
+        <button class="cancel-btn" id="cancelBtn">✕ 重新选择视频</button>
       </div>
     </div>
   </div>
@@ -1424,6 +1439,7 @@ function bindEvents() {
 
   // Start & Reset
   $('startBtn').onclick = startAnalysis;
+  $('cancelBtn').onclick = cancelUpload;
   $('resetBtn').onclick = resetAll;
 
   // Copy & Export
@@ -1527,6 +1543,17 @@ function handleFile(file) {
     $('uploadZone').style.display = 'none';
     $('previewSection').classList.add('show');
   };
+}
+
+function cancelUpload() {
+  currentFile = null;
+  const video = $('videoEl');
+  video.src = '';
+  video.removeAttribute('src');
+  $('fileInput').value = '';
+  $('uploadZone').style.display = '';
+  $('previewSection').classList.remove('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function fmtTime(s) {
