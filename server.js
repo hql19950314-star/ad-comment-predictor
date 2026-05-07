@@ -1,5 +1,5 @@
 ﻿/**
- * 繁星-视频分析 - 后端服务器 v5.16.3 (Gemini 版)
+ * 繁星-视频分析 - 后端服务器 v5.16.4 (Gemini 版)
  *
  * 功能：
  * 1. 接收视频文件上传（支持 200MB+）
@@ -87,7 +87,7 @@ app.use(express.static(__dirname));
 
 // ── Health ───────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.16.3', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
+  res.json({ status: 'ok', service: 'star-video-analyzer', version: '5.16.4', timestamp: new Date().toISOString(), imageAnalysis: true, imageGeneration: true });
 });
 
 app.get('/', (req, res) => {
@@ -470,6 +470,30 @@ function cleanJsonResponse(text) {
   return text.trim();
 }
 
+// 归一化时间范围（如 0.000秒-2.100秒 → 0:00-0:02）
+function normalizeTimeRange(tr) {
+  if (!tr || typeof tr !== 'string') return tr;
+  return tr.replace(/(\d+(?:\.\d+)?)\s*秒?/g, (_, secs) => {
+    const t = Math.round(parseFloat(secs));
+    const m = Math.floor(t / 60);
+    const s = t % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  });
+}
+
+function normalizeTimeRanges(obj) {
+  if (!obj || typeof obj !== 'object') return;
+  if (Array.isArray(obj.timelinePrompts)) {
+    obj.timelinePrompts.forEach(tp => { tp.timeRange = normalizeTimeRange(tp.timeRange); });
+  }
+  if (Array.isArray(obj.storyboard)) {
+    obj.storyboard.forEach(s => { s.timeRange = normalizeTimeRange(s.timeRange); });
+  }
+  if (Array.isArray(obj.timeline)) {
+    obj.timeline.forEach(t => { t.timeRange = normalizeTimeRange(t.timeRange); });
+  }
+}
+
 function getErrorHint(msg) {
   if (msg.includes('PERMISSION_DENIED')) return 'Gemini API 访问被拒绝，请检查 API Key';
   if (msg.includes('RESOURCE_EXHAUSTED') || msg.includes('quota')) return 'API 配额用尽，请检查账单或稍后重试';
@@ -675,6 +699,9 @@ ${template.template}
 
   try {
     const result = JSON.parse(cleanJsonResponse(text));
+    // 归一化所有 timeRange
+    normalizeTimeRanges(result);
+    normalizeTimeRanges(visualData);
     console.log('  → Stage 2 完成，分镜提示词:', result.timelinePrompts?.length || 0, '个');
     return {
       visual: visualData,
@@ -738,6 +765,7 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 
   try {
     const result = JSON.parse(cleanJsonResponse(text));
+    normalizeTimeRanges(result);
     console.log('  → Stage 3 完成，画风:', artStyle, '变化:', result.changesSummary);
     return {
       artStyle: result.artStyle || artStyle,
@@ -754,7 +782,7 @@ ${optimizeStr}${templateStr}${styleBlock}`;
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('\n╔════════════════════════════════════════════╗');
-  console.log('║   🌟 繁星-视频分析+图片分析  v5.16.3          ║');
+  console.log('║   🌟 繁星-视频分析+图片分析  v5.16.4          ║');
   console.log('╠════════════════════════════════════════════╣');
   console.log('║   地址: http://localhost:3000                  ║');
   console.log('║   视频: gemini-2.5-pro                         ║');
